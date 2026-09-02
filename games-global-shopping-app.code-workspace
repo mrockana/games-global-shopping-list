@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"dotnet",
+			"Mediat",
+			"Meziantou",
+			"PGADMIN",
+			"Youtube"
+		],
+		"chat.tools.terminal.autoApprove": {
+			"dotnet build": true,
+			"dotnet ef": true
+		}
+	}
+}

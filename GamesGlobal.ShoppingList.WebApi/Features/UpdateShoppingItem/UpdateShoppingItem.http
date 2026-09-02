@@ -1,0 +1,12 @@
+@url=update-shopping-item
+
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "shoppingItemId": 9,
+  "name": "Choc Brownie",
+  "Description": "Chocolate delight"
+}

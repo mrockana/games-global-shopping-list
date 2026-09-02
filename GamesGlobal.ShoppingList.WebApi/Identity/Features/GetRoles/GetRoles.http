@@ -1,0 +1,7 @@
+@url=identity/roles
+
+
+GET {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+
+

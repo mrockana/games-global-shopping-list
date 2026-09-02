@@ -1,0 +1,16 @@
+@url=identity/add-role
+
+
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "RoleName": "Agent",
+  "Permissions": [
+    {
+      "Value": 0
+    }
+  ]
+}

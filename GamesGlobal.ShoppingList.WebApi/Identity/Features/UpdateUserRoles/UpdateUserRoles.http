@@ -1,0 +1,12 @@
+@url=identity/update-user-roles
+
+
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "UserId": 2,
+  "RoleIds": [ 1 ]
+}

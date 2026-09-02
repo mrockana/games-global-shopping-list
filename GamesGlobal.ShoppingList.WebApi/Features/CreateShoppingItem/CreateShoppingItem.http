@@ -1,0 +1,11 @@
+@url=create-shopping-item
+
+POST {{baseUrl}}/{{url}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+Accept: */*
+
+{
+  "name": "Milo",
+  "Description": "Hot bev"
+}

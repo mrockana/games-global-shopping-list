@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectVersion>2.1</ProjectVersion>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <DockerPublishLocally>False</DockerPublishLocally>
+    <ProjectGuid>f3bd7e91-4a73-4131-b254-165fba0162a4</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <DockerServiceName>gamesglobal.shoppinglist.webapi</DockerServiceName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="configs\loki-config.yaml" />
+    <None Include="configs\otel-collector-config.yaml" />
+    <None Include="configs\prometheus.yml" />
+    <None Include="configs\promtail-config.yaml" />
+    <None Include="docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.yml" />
+    <None Include=".dockerignore" />
+    <None Include="grafana-config\grafana.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="configs\otel-collector\" />
+    <Folder Include="grafana\" />
+    <Folder Include="prometheus\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+@url=identity/update-role-permissions
+
+
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "RoleId": 4,
+  "RoleName": "Agent",
+  "Permissions": [
+    {
+      "Value": -1
+    }
+  ]
+}

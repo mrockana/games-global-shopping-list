@@ -1,0 +1,15 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "baseUrl": "https://localhost:7223"
+        },
+        "local": {
+            "baseUrl": "https://localhost:7223",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibW9sb3RvQGV4YW1wbGUuY29tIiwiUGVybWlzc2lvbnMiOiIxIiwic2lkIjoiN2NjOTkxMTAtMWQ4Mi00ZWE3LWJmOTMtZjVlZWE0Zjc4NTdhIiwic3ViIjoibW9sb3RvQGV4YW1wbGUuY29tIiwiZW1haWwiOiJtb2xvdG9AZXhhbXBsZS5jb20iLCJqdGkiOiJjMDc0ZTZmZC1lMzJlLTQ4ZWItYjMxMS1jZDkwZDE0MzUxMzIiLCJleHAiOjE3NTUwMTc1MjAsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcyMjMiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MjIzIn0.jj6HD6qoRCkwhqPgVg0R-2dqLmkzRqPpiqg8QOX3iII"
+        },
+        "localAdmin": {
+            "baseUrl": "https://localhost:7223",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJQZXJtaXNzaW9ucyI6Ii0xIiwic2lkIjoiN2YxYWExYWYtNDJhMi00M2ExLTg4NjctNDg0MDZjYmQ0ZDQzIiwic3ViIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwianRpIjoiNjAzZjgxMDMtNjJmNi00MzJlLTk5NDgtZGU4N2E2MzA4YjRhIiwiZXhwIjoxNzU1MDE3MDk1LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MjIzIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzIyMyJ9.mxDr27CokFucyvNZLO4YpHUVMiYPmDu38ZF6N9e1lRA"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+@url=identity/refresh-token
+
+
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "refreshToken": "QVFBQUFBSUFBWWFnQUFBQUVJSmxDbzZTbVRFcGF4NWJpRUFoWm5DaGdicjNRNmtDUDRnOU42d3cxcGxkM1hsYmw5ZWNuQlhqWDVKaVgwVUhLUT09"
+}

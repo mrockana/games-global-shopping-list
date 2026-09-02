@@ -1,0 +1,152 @@
+
+networks:
+    templateapi.network:
+
+volumes:
+    postgres-data:
+    pgadmin-data:
+
+services:
+    gamesglobal.shoppinglist.webapi:
+        container_name: gamesglobal.shoppinglist.webapi
+        image: ${DOCKER_REGISTRY-}templateapisolutionwebapi
+        build:
+            context: .
+            dockerfile: GamesGlobal.ShoppingList.WebApi/Dockerfile
+        ports:
+            - "8000:443"
+            - "8001:80"
+            
+        networks:
+            - templateapi.network
+        depends_on:
+            sql.database:
+                condition: service_healthy
+            otel-collector:
+                condition: service_started
+            loki:
+                condition: service_started
+        environment:
+            - OtelExport__Endpoint=http://otel-collector:4317
+            - ConnectionStrings__postgres=Host=webapi-app-database;Port=5432;Database=ShoppingItemsAppDB;Username=postgres;Password=yourStrong(!)Password;
+        
+
+    sql.database:
+        container_name: webapi-app-database
+        image: postgres:17
+        ports:
+            - 5432:5432
+        networks:
+            - templateapi.network
+        environment:
+            - POSTGRES_DB=ShoppingItemsAppDB
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=yourStrong(!)Password
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres -d ShoppingItemsAppDB"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4:latest
+        restart: unless-stopped
+        ports:
+            - "5050:80"
+        networks:
+            - templateapi.network
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@example.com
+            - PGADMIN_DEFAULT_PASSWORD=123Abc123@
+            - PGADMIN_CONFIG_SERVER_MODE=False
+            - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+        volumes:
+            - pgadmin-data:/var/lib/pgadmin
+        depends_on:
+            sql.database:
+                condition: service_healthy
+
+    grafana:
+        container_name: grafana
+        restart: unless-stopped
+        image: grafana/grafana:latest
+        user: "$UID:$GID"
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            - GF_SERVER_ROOT_URL=https://logs-v2.twistedqueue.com
+        volumes:
+            - ./appData/grafana:/var/lib/grafana
+            - ./configs/grafana-config:/etc/grafana
+        ports:
+            - "3000:3000"
+        networks:
+            - templateapi.network
+        depends_on:
+            - prometheus
+
+    otel-collector:
+        image: otel/opentelemetry-collector:latest
+        restart: on-failure
+        command: ["--config=/etc/otel-collector-config.yaml"]
+        volumes:
+          - ./configs/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+        ports:
+          - 1888:1888
+          - 8888:8888
+          - 8889:8889
+          - 13133:13133
+          - 4317:4317
+          - 4318:4318
+          - 55679:55679
+        networks:
+          - templateapi.network
+        depends_on:
+          - jaeger
+          - prometheus
+          - loki
+
+    jaeger:
+        image: jaegertracing/jaeger:2.2.0
+        environment:
+            - LOG_LEVEL=debug
+        ports:
+            - "16686:16686"
+
+        networks:
+            - templateapi.network
+
+    loki:
+        image: grafana/loki:latest
+        ports:
+            - "3100:3100"
+        volumes:
+            - ./configs/loki-config.yaml:/etc/loki/loki-config.yaml
+        networks:
+            - templateapi.network
+
+    promtail:
+        image: grafana/promtail:latest
+        volumes:
+            - ./appData/promatail/log:/var/log
+            - ./configs/promtail-config.yml:/etc/promtail/promtail-config.yaml
+        networks:
+            - templateapi.network
+
+
+    prometheus:
+        image: prom/prometheus:latest
+        restart: unless-stopped
+        command:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+        volumes:
+          - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+          - ./appData/prometheus:/prometheus
+        ports:
+          - "9090:9090"
+        networks:
+          - templateapi.network
+
+

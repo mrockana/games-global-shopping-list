@@ -1,0 +1,7 @@
+@url=shopping-item
+@shoppingItemId=7
+
+###
+
+DELETE {{baseUrl}}/{{url}}/{{shoppingItemId}}
+Authorization: Bearer {{token}}

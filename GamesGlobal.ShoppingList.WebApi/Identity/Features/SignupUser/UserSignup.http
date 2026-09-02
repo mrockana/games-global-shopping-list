@@ -1,0 +1,13 @@
+@url=identity/signup
+
+POST {{baseUrl}}/{{url}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "firstName": "Mpho",
+  "lastName": "Example",
+  "email": "gamesglobal@example.com",
+  "password": "123Abc123@",
+  "confirmPassword": "123Abc123@"
+}

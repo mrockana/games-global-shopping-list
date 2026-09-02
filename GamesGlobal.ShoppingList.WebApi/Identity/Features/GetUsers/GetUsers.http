@@ -1,0 +1,7 @@
+@url=identity/users
+
+
+GET {{baseUrl}}/{{url}}?take=5&skip=0
+Authorization: Bearer {{token}}
+
+

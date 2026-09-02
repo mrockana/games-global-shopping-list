@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  SOLUTION: GamesGlobal.ShoppingList.sln
+  BUILD_CONFIGURATION: Release
+  COVERAGE_THRESHOLD: 50
+
+jobs:
+  code-quality:
+    name: Check code quality
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Installed dotnet versions
+        run: dotnet --list-sdks
+
+      - name: Check code quality
+        run: dotnet format ${{ env.SOLUTION }} --verify-no-changes
+
+  build:
+    name: Build solution
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Dotnet restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Dotnet build
+        run: dotnet build ${{ env.SOLUTION }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+
+  test:
+    name: Test and report
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Dotnet test
+        run: >-
+          dotnet test ${{ env.SOLUTION }}
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ${{ github.workspace }}/TestResults
+          --collect "XPlat Code Coverage"
+
+      - name: Create coverage report
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"${{ github.workspace }}/TestResults/**/coverage.cobertura.xml" -targetdir:"${{ github.workspace }}/CoverageReport" -reporttypes:"HtmlInline;Cobertura;MarkdownSummaryGithub;JsonSummary"
+
+      - name: Publish test and coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-and-coverage-results
+          path: |
+            ${{ github.workspace }}/TestResults
+            ${{ github.workspace }}/CoverageReport
+
+      - name: Publish coverage summary
+        if: always()
+        run: Get-Content "${{ github.workspace }}/CoverageReport/SummaryGithub.md" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+        shell: pwsh
+
+      - name: Coverage validation
+        shell: pwsh
+        run: |
+          $summary = Get-Content "${{ github.workspace }}/CoverageReport/Summary.json" -Raw | ConvertFrom-Json
+          $lineCoverage = [double]$summary.summary.linecoverage
+          Write-Host "Line coverage: $lineCoverage% (threshold: ${{ env.COVERAGE_THRESHOLD }}%)"
+          if ($lineCoverage -lt ${{ env.COVERAGE_THRESHOLD }}) {
+            Write-Error "Line coverage $lineCoverage% is below the required threshold of ${{ env.COVERAGE_THRESHOLD }}%."
+            exit 1
+          }

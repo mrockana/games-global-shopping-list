@@ -1,0 +1,22 @@
+﻿using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
+using GamesGlobal.ShoppingList.BusinessDomain.Entities;
+using GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.EntityConfiguration;
+using Microsoft.EntityFrameworkCore;
+
+namespace GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application;
+
+internal sealed class ApplicationDbContext : DbContext, IApplicationDbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<ShoppingItem> ShoppingItems { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.AddApplicationDbContextDataSeed();
+        modelBuilder.ApplyConfiguration(new ShoppingItemConfiguration());
+    }
+}

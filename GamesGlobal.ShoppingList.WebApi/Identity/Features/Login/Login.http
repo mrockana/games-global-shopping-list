@@ -1,0 +1,33 @@
+@url=identity/login 
+### TODO: > These credentials are intended for local development only; they will be removed in production. Please use the appropriate credentials on higher environments.
+
+### End-User Log-in
+POST {{baseUrl}}/{{url}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "username": "johndoe@example.gamesglobal",
+  "password": "123Abc123@"
+}
+
+
+### Super Admin Log-in
+POST {{baseUrl}}/{{url}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "username": "admin@example.gamesglobal",
+  "password": "123Abc123@"
+}
+
+### Auditor General Log-in
+POST {{baseUrl}}/{{url}}
+Content-Type: application/json
+Accept: */*
+
+{
+  "username": "auditor@example.gamesglobal",
+  "password": "123Abc123@"
+}
