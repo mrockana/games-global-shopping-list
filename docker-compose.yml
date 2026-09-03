@@ -86,6 +86,8 @@ services:
             - templateapi.network
         depends_on:
             - prometheus
+            - loki
+            - jaeger
 
     otel-collector:
         image: otel/opentelemetry-collector:latest
@@ -122,16 +124,15 @@ services:
         image: grafana/loki:latest
         ports:
             - "3100:3100"
-        volumes:
-            - ./configs/loki-config.yaml:/etc/loki/loki-config.yaml
         networks:
             - templateapi.network
 
     promtail:
         image: grafana/promtail:latest
+        command: ["-config.file=/etc/promtail/promtail-config.yaml"]
         volumes:
             - ./appData/promatail/log:/var/log
-            - ./configs/promtail-config.yml:/etc/promtail/promtail-config.yaml
+            - ./configs/promtail-config.yaml:/etc/promtail/promtail-config.yaml
         networks:
             - templateapi.network
 
