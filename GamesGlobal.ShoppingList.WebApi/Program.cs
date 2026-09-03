@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
 builder.Logging.SetupOpenTelemetryLogging();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 #region Add Endpoints
 builder.Services.AddEndpoints();
@@ -41,8 +41,8 @@ app.UseMiddleware<NonSuccessResponseMiddleware>();
 app.UseHttpLogging();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSwagger();
-app.UseSwaggerUI();
+app.MapOpenApi();
+app.MapScalarApiReference("/docs");
 app.UseHttpsRedirection();
 
 #region Add Endpoints
