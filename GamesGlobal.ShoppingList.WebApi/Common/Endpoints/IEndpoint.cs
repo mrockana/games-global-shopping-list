@@ -2,7 +2,7 @@
 
 namespace GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
 
-internal interface IEndpoint
+public interface IEndpoint
 {
     void MapEndpoint(IEndpointRouteBuilder app);
 }
