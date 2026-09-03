@@ -21,7 +21,8 @@ internal sealed class UpdateShoppingItemEndpoint : IEndpoint
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Permissions = Permissions.ShoppingItemsSelfReadWrite)]
         async ([FromBody] UpdateShoppingItemCommandRequest shoppingItem, [FromServices] ApplicationRequestProcessor requestProcessor, HttpContext context) =>
         {
-            var result = await requestProcessor.Process<UpdateShoppingItemCommandRequest, UpdateShoppingItemResponse>(shoppingItem, context.RequestAborted);
+            var request = shoppingItem with { UserCode = context.User.GetUserCode() };
+            var result = await requestProcessor.Process<UpdateShoppingItemCommandRequest, UpdateShoppingItemResponse>(request, context.RequestAborted);
             return result;
         })
        .WithName("UpdateShoppingItem")

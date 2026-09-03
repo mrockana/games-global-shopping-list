@@ -1,3 +1,5 @@
+using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Features;
 using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
@@ -15,6 +17,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
     private readonly IApplicationRepository _repository = Substitute.For<IApplicationRepository>();
     private readonly IIdentityRepository _identityRepository = Substitute.For<IIdentityRepository>();
     private readonly ILogger<CreateShoppingItemCommandHandler> _logger = Substitute.For<ILogger<CreateShoppingItemCommandHandler>>();
+    private readonly ICacheService _cacheService = Substitute.For<ICacheService>();
 
     [Fact]
     public async Task Handle_UserDoesNotExist_ReturnsApplicationException()
@@ -22,7 +25,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
         var command = new CreateShoppingItemCommandRequest(Guid.NewGuid(), "Milk", "Two litres");
         _identityRepository.GetSingleAsync(Arg.Any<Specification<User>>(), Arg.Any<CancellationToken>()).Returns((User?)null);
 
-        var result = await new CreateShoppingItemCommandHandler(_repository, _logger, _identityRepository).Handle(command);
+        var result = await CreateHandler().Handle(command);
 
         Assert.True(result.HasError);
         Assert.IsType<DomainApplicationException>(result.Error);
@@ -40,7 +43,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
         _repository.SavedSuccessful(0).Returns(false);
 
         // Act
-        var result = await new CreateShoppingItemCommandHandler(_repository, _logger, _identityRepository).Handle(command);
+        var result = await CreateHandler().Handle(command);
 
         // Assert
         Assert.True(result.HasError);
@@ -60,7 +63,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
         _repository.SavedSuccessful(1).Returns(true);
 
         // Act
-        var result = await new CreateShoppingItemCommandHandler(_repository, _logger, _identityRepository).Handle(command);
+        var result = await CreateHandler().Handle(command);
 
         // Assert
         Assert.False(result.HasError);
@@ -68,6 +71,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
         Assert.Equal(userCode, result.Value?.UserCode);
         Assert.Equal(command.Name, result.Value?.Name);
         _repository.Received(1).Insert(Arg.Is<ShoppingItem>(shoppingItem => shoppingItem.UserCode == userCode && shoppingItem.Name == command.Name));
+        await _cacheService.Received(1).RemoveAsync(ShoppingItemCacheKeys.ForUser(userCode), Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -88,4 +92,6 @@ public sealed class CreateShoppingItemCommandHandlerTests
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, error => error.PropertyName.Equals(nameof(CreateShoppingItemCommandRequest.UserCode), StringComparison.InvariantCulture));
     }
+
+    private CreateShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _identityRepository, _cacheService);
 }

@@ -20,7 +20,7 @@ internal sealed class DeleteShoppingItemEndpoint : IEndpoint
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Permissions = Permissions.ShoppingItemsSelfReadWrite)]
         async ([FromRoute] int shoppingItemId, [FromServices] ApplicationRequestProcessor requestProcessor, HttpContext context) =>
         {
-            var request = new DeleteShoppingItemCommand(shoppingItemId);
+            var request = new DeleteShoppingItemCommand(shoppingItemId, context.User.GetUserCode());
 
             var result = await requestProcessor.Process<DeleteShoppingItemCommand, DeleteShoppingItemResponse>(request, context.RequestAborted);
             return result;

@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using GamesGlobal.ShoppingList.Application.Common;
+using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DomainException;
@@ -27,13 +28,15 @@ public sealed class UploadShoppingItemImageCommandHandler : IApplicationRequestH
     private readonly FileObjectStoreOptions _fileObjectStoreOptions;
     private readonly ILogger<UploadShoppingItemImageCommandHandler> _logger;
     private readonly ActivitySource _activitySource;
+    private readonly ICacheService _cacheService;
 
     public UploadShoppingItemImageCommandHandler(
         IApplicationRepository repository,
         IIdentityRepository identityRepository,
         IFileObjectStoreService fileObjectStoreService,
         FileObjectStoreOptions fileObjectStoreOptions,
-        ILogger<UploadShoppingItemImageCommandHandler> logger)
+        ILogger<UploadShoppingItemImageCommandHandler> logger,
+        ICacheService cacheService)
     {
         _repository = repository;
         _identityRepository = identityRepository;
@@ -41,6 +44,7 @@ public sealed class UploadShoppingItemImageCommandHandler : IApplicationRequestH
         _fileObjectStoreOptions = fileObjectStoreOptions;
         _logger = logger;
         _activitySource = DiagnosticConfig.ActivitySource;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<UploadShoppingItemImageResponse>> Handle(UploadShoppingItemImageCommandRequest request, CancellationToken cancellationToken = default)
@@ -108,6 +112,7 @@ public sealed class UploadShoppingItemImageCommandHandler : IApplicationRequestH
             return Result.CreateErrorResult<UploadShoppingItemImageResponse>(new DomainApplicationException(failedToUploadMessage));
         }
 
+        await _cacheService.RemoveAsync(ShoppingItemCacheKeys.ForUser(user.UserCode), cancellationToken);
         return Result.CreateResult(document.ToUploadShoppingItemImageResponse(item.ShoppingItemId));
     }
 

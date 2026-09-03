@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Features.FileObjectStore;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Minio;
+using StackExchange.Redis;
 
 namespace GamesGlobal.ShoppingList.Infrastructure;
 
@@ -77,6 +79,17 @@ public static class DependencyInjectionExtensions
         });
 
         services.AddTransient<IFileObjectStoreService, FileObjectStore.FileObjectStoreService>();
+    }
+
+    public static void AddCacheServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        string redisConnectionString = configuration.GetConnectionString("redis") ?? throw new InvalidOperationException("The Redis connection string is required.");
+        var redisOptions = ConfigurationOptions.Parse(redisConnectionString);
+        redisOptions.AbortOnConnectFail = false;
+        redisOptions.ConnectRetry = 1;
+
+        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisOptions));
+        services.AddSingleton<ICacheService, Cache.RedisCacheService>();
     }
 
     public static void ApplyMigrations(this IApplicationBuilder app)

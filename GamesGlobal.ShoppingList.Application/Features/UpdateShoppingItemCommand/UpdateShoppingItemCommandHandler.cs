@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using GamesGlobal.ShoppingList.Application.Common;
+using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DomainException;
@@ -17,12 +19,17 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
     private readonly IApplicationRepository _repository;
     private readonly ILogger<UpdateShoppingItemCommandHandler> _logger;
     private readonly ActivitySource _activitySource;
+    private readonly ICacheService _cacheService;
 
-    public UpdateShoppingItemCommandHandler(IApplicationRepository repository, ILogger<UpdateShoppingItemCommandHandler> logger)
+    public UpdateShoppingItemCommandHandler(
+        IApplicationRepository repository,
+        ILogger<UpdateShoppingItemCommandHandler> logger,
+        ICacheService cacheService)
     {
         _repository = repository;
         _logger = logger;
         _activitySource = DiagnosticConfig.ActivitySource;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<UpdateShoppingItemResponse>> Handle(UpdateShoppingItemCommandRequest request, CancellationToken cancellationToken = default)
@@ -45,6 +52,11 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
             return Result.CreateErrorResult<UpdateShoppingItemResponse>(new DomainNotFoundException($"Shopping item with ID {request.ShoppingItemId.ToString()} not found."));
         }
 
+        if (shoppingItem.UserCode != request.UserCode)
+        {
+            return Result.CreateErrorResult<UpdateShoppingItemResponse>(new DomainForbiddenActionException("You are not allowed to update this shopping item."));
+        }
+
         shoppingItem!.Description = request.Description;
         shoppingItem!.Name = request.Name;
 
@@ -56,12 +68,13 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
             return Result.CreateErrorResult<UpdateShoppingItemResponse>(new DomainApplicationException("Failed to update shopping item."));
         }
 
+        await _cacheService.RemoveAsync(ShoppingItemCacheKeys.ForUser(shoppingItem.UserCode), cancellationToken);
         Result<UpdateShoppingItemResponse>? response = Result.CreateResult<UpdateShoppingItemResponse>(shoppingItem.ToUpdateShoppingItemResponse());
         return response;
     }
 }
 
-public sealed record UpdateShoppingItemCommandRequest(long ShoppingItemId, string Name, string? Description)
+public sealed record UpdateShoppingItemCommandRequest(long ShoppingItemId, Guid UserCode, string Name, string? Description)
     : ICommand<UpdateShoppingItemResponse>
 {
 }

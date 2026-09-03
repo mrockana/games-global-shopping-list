@@ -6,6 +6,7 @@ volumes:
     postgres-data:
     pgadmin-data:
     minio-data:
+    redis-data:
 
 services:
     gamesglobal.shoppinglist.webapi:
@@ -29,6 +30,8 @@ services:
                 condition: service_started
             minio:
                 condition: service_started
+            redis:
+                condition: service_started
         environment:
             - OtelExport__Endpoint=http://otel-collector:4317
             - ConnectionStrings__postgres=Host=webapi-app-database;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
@@ -40,6 +43,7 @@ services:
             - FileObjectStoreOptions__Secret=${FILE_OBJECT_STORE_SECRET}
             - FileObjectStoreOptions__UseSsl=${FILE_OBJECT_STORE_USE_SSL}
             - FileObjectStoreOptions__BucketName=${FILE_OBJECT_STORE_BUCKET_NAME}
+            - ConnectionStrings__redis=redis:6379
         volumes:
             - ./appData/logs:/appData/logs
 
@@ -98,6 +102,21 @@ services:
             - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
         volumes:
             - minio-data:/data
+
+    redis:
+        container_name: redis
+        image: redis:7-alpine
+        ports:
+            - "6379:6379"
+        networks:
+            - templateapi.network
+        volumes:
+            - redis-data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
     grafana:
         container_name: grafana
