@@ -44,7 +44,7 @@ public sealed class GetShoppingItemsQueryHandlerTests
 
         Assert.False(result.HasError);
         Assert.Equal(2, result.Value?.Count);
-        Assert.Contains(result.Value!, item => item.ShoppingItemId == items[0].ShoppingItemId && string.Equals(item.Name, items[0].Name, StringComparison.Ordinal ));
+        Assert.Contains(result.Value!, item => item.ShoppingItemId == items[0].ShoppingItemId && string.Equals(item.Name, items[0].Name, StringComparison.Ordinal));
     }
 
     [Fact]
