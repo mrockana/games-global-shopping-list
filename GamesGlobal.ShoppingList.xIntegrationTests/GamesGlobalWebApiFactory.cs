@@ -17,11 +17,31 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
 
     public string PostgresConnectionString => _postgres.GetConnectionString();
 
-    public IIdentityDbContext IdentityDbContext => (_serviceScope ??= Services.CreateScope())
-        .ServiceProvider.GetRequiredService<IIdentityDbContext>();
+    public IIdentityDbContext IdentityDbContext
+    {
+        get
+        {
+            if (_serviceScope == null)
+            {
+                _serviceScope = Services.CreateScope();
+            }
 
-    public IApplicationDbContext ApplicationDbContext => (_serviceScope ??= Services.CreateScope())
-        .ServiceProvider.GetRequiredService<IApplicationDbContext>();
+            return _serviceScope!.ServiceProvider.GetRequiredService<IIdentityDbContext>();
+        }
+    }
+
+    public IApplicationDbContext ApplicationDbContext
+    {
+        get
+        {
+            if (_serviceScope == null)
+            {
+                _serviceScope = Services.CreateScope();
+            }
+
+            return _serviceScope!.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+        }
+    }
 
     public Task InitializeAsync() => _postgres.StartAsync();
 
