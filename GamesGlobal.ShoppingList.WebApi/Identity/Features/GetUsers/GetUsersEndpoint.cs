@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using RateLimiterConstants = GamesGlobal.ShoppingList.WebApi.Common.RateLimiting.RateLimiterConstants;
 
 namespace GamesGlobal.ShoppingList.WebApi.Identity.Features.GetUsers;
 
@@ -33,6 +34,7 @@ internal sealed class GetUsersEndpoint : IEndpoint
        .WithName("get-users")
        .AddEndpointFilter<ResponseHandlingFilter>()
        .Produces<PaginatedResults<IList<GetUsersQueryResponse>>>()
+       .RequireRateLimiting(RateLimiterConstants.PerUserLimiterPolicyName)
        .WithTags(EndpointTags.Identity);
     }
 }

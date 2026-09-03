@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using RateLimiterConstants = GamesGlobal.ShoppingList.WebApi.Common.RateLimiting.RateLimiterConstants;
 
 namespace GamesGlobal.ShoppingList.WebApi.Features.UpdateShoppingItem;
 
@@ -26,6 +27,7 @@ internal sealed class UpdateShoppingItemEndpoint : IEndpoint
        .WithName("UpdateShoppingItem")
        .AddEndpointFilter<ResponseHandlingFilter>()
        .Produces<UpdateShoppingItemResponse>()
+       .RequireRateLimiting(RateLimiterConstants.PerUserLimiterPolicyName)
        .WithTags(EndpointTags.ShoppingItem);
     }
 }

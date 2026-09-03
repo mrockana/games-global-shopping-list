@@ -4,12 +4,13 @@ internal static class WebApiConstants
 {
     internal static class ProblemDetailTitleConstants
     {
-        internal const string NotImplementedTitle = "Method Not Implemented.";
-        internal const string DependencyTitle = "Dependency Issue.";
-        internal const string GeneralExceptionTitle = "Failed to Process Request.";
-        internal const string NotFoundExceptionTitle = "Not Found.";
-        internal const string ValidationExceptionTitle = "Validation Error.";
-        internal const string ForbiddenActionExceptionTitle = "Forbidden Action.";
-        internal const string UnauthorizedExceptionTitle = "Unauthorized Action.";
+        internal const string NotImplementedTitle = "Method not implemented.";
+        internal const string DependencyTitle = "Dependency issue.";
+        internal const string GeneralExceptionTitle = "Failed to process request.";
+        internal const string TooManyRequestsTitle = "Too many requests.";
+        internal const string NotFoundExceptionTitle = "Not found.";
+        internal const string ValidationExceptionTitle = "Validation error.";
+        internal const string ForbiddenActionExceptionTitle = "Forbidden action.";
+        internal const string UnauthorizedExceptionTitle = "Unauthorized action.";
     }
 }
