@@ -11,7 +11,7 @@ namespace GamesGlobal.ShoppingList.xIntegrationTests;
 
 public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:15-alpine")
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17")
        .Build();
     private IServiceScope? _serviceScope;
 

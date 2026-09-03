@@ -25,6 +25,9 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Pull PostgreSQL image
+        run: docker pull postgres:17
+
       - name: Dotnet test
         run: >-
           dotnet test ${{ env.INTEGRATION_TESTS_PROJECT }}
@@ -78,7 +81,7 @@ jobs:
 
       - name: Dotnet test
         run: >-
-          dotnet test ${{ env.UNIT_TEST_PROJECT }}
+          dotnet test ${{ env.UNIT_TESTS_PROJECT }}
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger "trx;LogFileName=test-results.trx"
           --results-directory ${{ github.workspace }}/TestResults
