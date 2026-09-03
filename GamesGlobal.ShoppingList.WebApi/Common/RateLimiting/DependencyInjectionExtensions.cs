@@ -16,8 +16,8 @@ internal static class DependencyInjectionExtensionsRateLimiting
 {
     internal static void SetupRateLimiter(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection rateLimiterOptionsSection = configuration.GetRequiredSection(nameof(RateLimiterModuleOptions));
-        services.Configure<RateLimiterModuleOptions>(rateLimiterOptionsSection);
+        IConfigurationSection rateLimiterOptionsSection = configuration.GetRequiredSection(nameof(RateLimiterOptions));
+        services.Configure<RateLimiterOptions>(rateLimiterOptionsSection);
 
         services.AddRateLimiter(options =>
         {
@@ -60,6 +60,6 @@ internal static class DependencyInjectionExtensionsRateLimiting
             });
     }
 
-    private static RateLimiterModuleOptions GetRateLimiterOptions(HttpContext httpContext) =>
-        httpContext.RequestServices.GetRequiredService<IOptions<RateLimiterModuleOptions>>().Value;
+    private static RateLimiterOptions GetRateLimiterOptions(HttpContext httpContext) =>
+        httpContext.RequestServices.GetRequiredService<IOptions<RateLimiterOptions>>().Value;
 }
