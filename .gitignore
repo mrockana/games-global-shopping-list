@@ -9,6 +9,10 @@
 *.userosscache
 *.sln.docstates
 
+# Local environment files (docker compose secrets)
+.env
+!.env.example
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

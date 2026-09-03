@@ -1,6 +1,7 @@
 ﻿using System;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
+using GamesGlobal.ShoppingList.BusinessDomain.Features.FileObjectStore;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess.Repository;
 using GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application;
@@ -12,6 +13,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Minio;
 
 namespace GamesGlobal.ShoppingList.Infrastructure;
 
@@ -54,6 +57,23 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IIdentityDbContext>(sp => sp.GetRequiredService<IdentityDbContext>());
         services.AddTransient<IIdentityRepository, IdentityRepository>();
+    }
+
+    public static void AddFileObjectStoreServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        IConfigurationSection fileObjectStoreSection = configuration.GetRequiredSection(nameof(FileObjectStoreOptions));
+        services.Configure<FileObjectStoreOptions>(fileObjectStoreSection);
+        services.AddScoped(sp => sp.GetRequiredService<IOptions<FileObjectStoreOptions>>().Value);
+
+        FileObjectStoreOptions options = fileObjectStoreSection.Get<FileObjectStoreOptions>()!;
+
+        services.AddMinio(client => client
+            .WithEndpoint(new Uri(options.Url).Authority)
+            .WithCredentials(options.User, options.Secret)
+            .WithSSL(options.UseSsl)
+            .Build());
+
+        services.AddTransient<IFileObjectStoreService, FileObjectStore.FileObjectStoreService>();
     }
 
     public static void ApplyMigrations(this IApplicationBuilder app)
