@@ -9,6 +9,7 @@
 			"dotnet",
 			"Mediat",
 			"Meziantou",
+			"minioadmin",
 			"Npgsql",
 			"PGADMIN",
 			"postgres",
@@ -19,7 +20,12 @@
 		"chat.tools.terminal.autoApprove": {
 			"dotnet build": true,
 			"dotnet ef": true,
-			"dotnet test": true
+			"dotnet test": true,
+			"/^dotnet format --verify-no-changes \\.\\\\GamesGlobal\\.ShoppingList\\.sln 2>&1 \\| Select-Object -Last 30$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"dotnet format": true
 		}
 	}
 }

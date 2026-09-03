@@ -33,6 +33,7 @@ builder.Services.AddHttpLogging();
 // Add services to the container.
 builder.Services.AddOpenTelemetryServices(configuration, builder.Environment.IsDevelopment());
 builder.Services.AddDataInfrastructureServices(configuration, builder.Environment.IsDevelopment());
+builder.Services.AddFileObjectStoreServices(configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddApplicationServices(configuration);
 builder.Services.AddBusinessDomainServices(configuration);

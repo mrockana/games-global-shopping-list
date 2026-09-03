@@ -1,0 +1,15 @@
+@url=shopping-items/1/upload-image
+
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+# The object name is taken from the multipart "filename" value below.
+POST {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=ShoppingItemImageBoundary
+Accept: */*
+
+--ShoppingItemImageBoundary
+Content-Disposition: form-data; name="file"; filename="brownie.png"
+Content-Type: image/png
+
+< ./sample.png
+--ShoppingItemImageBoundary--

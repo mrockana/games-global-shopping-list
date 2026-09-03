@@ -4,4 +4,6 @@ internal static class DataAccessConstants
 {
     internal const string PostgresConnectionStringName = "postgres";
     internal const string IdentitySchema = "identity";
+
+    internal const string ApplicationSchema = "public";
 }

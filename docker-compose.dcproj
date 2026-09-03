@@ -10,6 +10,8 @@
     <DockerServiceName>gamesglobal.shoppinglist.webapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
+    <None Include=".env.example" />
     <None Include="configs\loki-config.yaml" />
     <None Include="configs\otel-collector-config.yaml" />
     <None Include="configs\prometheus.yml" />

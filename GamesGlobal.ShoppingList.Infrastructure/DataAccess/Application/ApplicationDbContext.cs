@@ -14,9 +14,12 @@ internal sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<ShoppingItem> ShoppingItems { get; set; }
 
+    public DbSet<Document> Documents { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.AddApplicationDbContextDataSeed();
         modelBuilder.ApplyConfiguration(new ShoppingItemConfiguration());
+        modelBuilder.ApplyConfiguration(new ShoppingItemDocumentConfiguration());
     }
 }
