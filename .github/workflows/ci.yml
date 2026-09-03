@@ -8,10 +8,36 @@ on:
 
 env:
   SOLUTION: GamesGlobal.ShoppingList.sln
+  UNIT_TESTS_PROJECT: GamesGlobal.ShoppingList.xUnitTests/GamesGlobal.ShoppingList.xUnitTests.csproj
+  INTEGRATION_TESTS_PROJECT: GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xIntegrationTests.csproj
   BUILD_CONFIGURATION: Release
   COVERAGE_THRESHOLD: 50
 
 jobs:
+  integration-tests:
+    name: Run integration tests
+    runs-on: ubuntu-latest
+    env:
+      IdentityModuleOptions__ApplicationUrl: https://localhost:7223
+      IdentityModuleOptions__JwtSigningKey: ci-test-jwt-signing-key-must-be-long-enough
+      IdentityModuleOptions__HashedTokenSigningKey: ci-test-hashed-token-signing-key
+      ASPNETCORE_ENVIRONMENT: Development
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Pull PostgreSQL image
+        run: docker pull postgres:17
+
+      - name: Dotnet test
+        run: >-
+          dotnet test ${{ env.INTEGRATION_TESTS_PROJECT }}
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+
   code-quality:
     name: Check code quality
     runs-on: windows-latest
@@ -60,7 +86,7 @@ jobs:
 
       - name: Dotnet test
         run: >-
-          dotnet test ${{ env.SOLUTION }}
+          dotnet test ${{ env.UNIT_TESTS_PROJECT }}
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger "trx;LogFileName=test-results.trx"
           --results-directory ${{ github.workspace }}/TestResults

@@ -9,14 +9,17 @@
 			"dotnet",
 			"Mediat",
 			"Meziantou",
+			"Npgsql",
 			"PGADMIN",
+			"postgres",
 			"Seri",
 			"Serilog",
 			"Youtube"
 		],
 		"chat.tools.terminal.autoApprove": {
 			"dotnet build": true,
-			"dotnet ef": true
+			"dotnet ef": true,
+			"dotnet test": true
 		}
 	}
 }

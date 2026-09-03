@@ -1,6 +1,6 @@
 namespace GamesGlobal.ShoppingList.WebApi.Common.RateLimiting;
 
-internal sealed class RateLimiterModuleOptions
+internal sealed class RateLimiterOptions
 {
     public required int WindowPermitLimit { get; set; }
 
