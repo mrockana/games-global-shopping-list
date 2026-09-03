@@ -6,7 +6,7 @@ public sealed class UpdateShoppingItemValidation : AbstractValidator<UpdateShopp
 {
     public UpdateShoppingItemValidation()
     {
-        RuleFor(r => r.ShoppingItemId).NotNull().NotEmpty().WithMessage($"{nameof(UpdateShoppingItemCommandRequest.ShoppingItemId)} is required");
+        RuleFor(r => r.ShoppingItemId).GreaterThan(0).WithMessage($"{nameof(UpdateShoppingItemCommandRequest.ShoppingItemId)} must be greater than zero");
         RuleFor(r => r.Name).NotNull().NotEmpty().WithMessage($"{nameof(UpdateShoppingItemCommandRequest.Name)} is required");
         RuleFor(r => r.Description).NotNull().NotEmpty().WithMessage($"{nameof(UpdateShoppingItemCommandRequest.Description)} is required");
     }

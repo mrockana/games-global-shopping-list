@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using RateLimiterConstants = GamesGlobal.ShoppingList.WebApi.Common.RateLimiting.RateLimiterConstants;
 
 namespace GamesGlobal.ShoppingList.WebApi.Identity.Features.SignupUser;
 
@@ -23,6 +24,7 @@ internal sealed class UserSignupEndpoint : IEndpoint
        .WithName("RegisterUser")
        .AddEndpointFilter<ResponseHandlingFilter>()
        .Produces<SignupResponse>()
+       .RequireRateLimiting(RateLimiterConstants.PerIpLimiterPolicyName)
        .WithTags(EndpointTags.Identity);
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RateLimiterConstants = GamesGlobal.ShoppingList.WebApi.Common.RateLimiting.RateLimiterConstants;
 
 namespace GamesGlobal.ShoppingList.WebApi.Features.CreateShoppingItem;
 
@@ -29,6 +30,7 @@ internal sealed class CreateShoppingItemEndpoint : IEndpoint
        .WithName("CreateShoppingItem")
        .Produces<CreateShoppingItemResponse>()
        .AddEndpointFilter<ResponseHandlingFilter>()
+       .RequireRateLimiting(RateLimiterConstants.PerUserLimiterPolicyName)
        .WithTags(EndpointTags.ShoppingItem);
     }
 }

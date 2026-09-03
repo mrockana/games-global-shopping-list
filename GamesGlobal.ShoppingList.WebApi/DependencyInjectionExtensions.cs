@@ -7,8 +7,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Serilog;
-using Serilog.Exceptions;
+using static GamesGlobal.ShoppingList.WebApi.Common.WebApiConstants;
 using CommomConstants = GamesGlobal.ShoppingList.Application.Common.Constants;
 
 namespace GamesGlobal.ShoppingList.WebApi;

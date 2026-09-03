@@ -7,6 +7,6 @@ public sealed class DeleteShoppingItemValidation : AbstractValidator<DeleteShopp
     public DeleteShoppingItemValidation()
     {
         RuleFor(r => r.ShoppingItemId)
-            .NotEmpty().WithMessage($"{nameof(DeleteShoppingItemCommand.ShoppingItemId)} is required");
+            .GreaterThan(0).WithMessage($"{nameof(DeleteShoppingItemCommand.ShoppingItemId)} must be greater than zero");
     }
 }
