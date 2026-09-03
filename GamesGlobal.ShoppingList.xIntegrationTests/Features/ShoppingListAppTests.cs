@@ -4,8 +4,10 @@ using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.GetShoppingItems;
 using GamesGlobal.ShoppingList.Application.Features.UpdateShoppingItemCommand;
+using GamesGlobal.ShoppingList.Application.Features.UploadShoppingItemImage;
 using GamesGlobal.ShoppingList.Application.Identity.Features.Login;
 using Microsoft.EntityFrameworkCore;
+using Minio.DataModel.Args;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests.Features;
 
@@ -15,6 +17,9 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
     private static readonly SessionLoginCommand LoginRequest = new(
         Username: "johndoe@example.gamesglobal",
         Password: "123Abc123@");
+
+    private static readonly byte[] OnePixelPng = Convert.FromBase64String(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
 
     private static Task<LoginResponse>? _loginResponseTask;
     private readonly HttpClient _apiClient;
@@ -126,13 +131,59 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
     }
 
     [Fact]
+    public async Task UploadShoppingItemImage_WithValidRequest_FileObjectStore()
+    {
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+        var createResponse = await CreateShoppingItemAsync("Item with image", "Upload test item");
+        var fileName = $"image-{Guid.NewGuid():N}.png";
+
+        using var form = new MultipartFormDataContent();
+        using var fileContent = new ByteArrayContent(OnePixelPng);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        form.Add(fileContent, "file", fileName);
+
+        var result = await _apiClient.PostAsync(
+            new Uri($"/shopping-items/{createResponse.ShoppingItemId.ToString()}/upload-image", UriKind.Relative),
+            form);
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<UploadShoppingItemImageResponse>();
+
+        Assert.NotNull(response);
+        Assert.Equal(createResponse.ShoppingItemId, response.ShoppingItemId);
+        Assert.Equal(fileName, response.Name);
+        Assert.Equal("image/png", response.MimeType);
+        Assert.Equal(OnePixelPng.Length, response.Size);
+
+        var objectName = $"{createResponse.UserCode}/{createResponse.ShoppingItemId.ToString()}/{fileName}";
+        Assert.Equal(
+            $"{_factory.FileObjectStoreUrl}/{GamesGlobalWebApiFactory.FileObjectStoreBucketName}/{objectName}",
+            response.Url,
+            StringComparer.Ordinal);
+
+        var objectStat = await _factory.MinioClient.StatObjectAsync(new StatObjectArgs()
+            .WithBucket(GamesGlobalWebApiFactory.FileObjectStoreBucketName)
+            .WithObject(objectName));
+
+        Assert.NotNull(objectStat);
+        Assert.Equal(objectName, objectStat.ObjectName);
+        Assert.Equal(OnePixelPng.Length, objectStat.Size);
+        Assert.Equal("image/png", objectStat.ContentType);
+
+        await _factory.MinioClient.RemoveObjectAsync(new RemoveObjectArgs()
+            .WithBucket(GamesGlobalWebApiFactory.FileObjectStoreBucketName)
+            .WithObject(objectName));
+    }
+
+    [Fact]
     public async Task DeleteShoppingItem_WithValidRequest_DeletesPersistedItem()
     {
         var loginResponse = await GetLoginResponseAsync();
         _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
         var createResponse = await CreateShoppingItemAsync("Item to delete", "Delete test item");
 
-        var result = await _apiClient.DeleteAsync($"/shopping-item/{createResponse.ShoppingItemId}");
+        var result = await _apiClient.DeleteAsync($"/shopping-item/{createResponse.ShoppingItemId.ToString()}");
         result.EnsureSuccessStatusCode();
 
         var response = await result.Content.ReadFromJsonAsync<DeleteShoppingItemResponse>();
