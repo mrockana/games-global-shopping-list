@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = builder.Configuration;
 
+builder.Host.ConfigureSeriLog(configuration, builder.Environment.IsDevelopment());
+
 builder.Logging.SetupOpenTelemetryLogging();
 
 builder.Services.AddEndpointsApiExplorer();
