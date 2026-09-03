@@ -5,6 +5,7 @@ networks:
 volumes:
     postgres-data:
     pgadmin-data:
+    minio-data:
 
 services:
     gamesglobal.shoppinglist.webapi:
@@ -25,6 +26,8 @@ services:
             otel-collector:
                 condition: service_started
             loki:
+                condition: service_started
+            minio:
                 condition: service_started
         environment:
             - OtelExport__Endpoint=http://otel-collector:4317
@@ -70,6 +73,23 @@ services:
         depends_on:
             sql.database:
                 condition: service_healthy
+
+    minio:
+        container_name: minio
+        image: minio/minio:latest
+        restart: unless-stopped
+        command: server /data --console-address ":9001"
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        networks:
+            - templateapi.network
+        environment:
+            - MINIO_ROOT_USER=minioadmin
+            - MINIO_ROOT_PASSWORD=minioadmin
+            - MINIO_DEFAULT_BUCKETS=ShoppingItemBucket
+        volumes:
+            - minio-data:/data
 
     grafana:
         container_name: grafana

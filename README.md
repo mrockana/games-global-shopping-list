@@ -7,7 +7,6 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - This container runs our web api GamesGlobal.ShoppingList.WebAPI. It is exposed on ports 8000 (https) and 8001 (http) and exports its telemetry to the OpenTelemetry collector.
 2. **sql.database**
    - PostgreSQL 17 (`postgres:17`) that our application uses to persist data. It listens on port 5432 and stores its data in the `postgres-data` Docker named volume.
-3. **pgadmin**
    - pgAdmin 4 web client for browsing and querying the PostgreSQL database. Its UI is available on port 5050 (`http://localhost:5050`), it logs in with `PGADMIN_DEFAULT_EMAIL` / `PGADMIN_DEFAULT_PASSWORD` and keeps its settings in the `pgadmin-data` named volume. From inside the stack connect to host `webapi-app-database` on port 5432.
 4. **otel-collector**
    - OpenTelemetry Collector that receives logs, traces and metrics from the web api over OTLP (ports 4317/4318). It then fans that telemetry out to Jaeger, Prometheus and Loki.
@@ -19,7 +18,9 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - Log aggregation store for the application logs, listening on port 3100. Grafana queries it to search and filter our logs.
 8. **promtail**
    - Log shipping agent that tails the log files under `./appData/promatail/log` and pushes them into Loki.
-9. **grafana**
+9. **minio**
+   - S3 compatible object storage used to store uploaded files such as shopping item images. The S3 API is exposed on port 9000 and the web console on port 9001 (`http://localhost:9001`), signing in with `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`. Its objects are kept in the `minio-data` named volume and from inside the stack it is reachable at `http://minio:9000`.
+10. **grafana**
    - Dashboarding and visualisation tool served on port 3000. It is the single place to view the metrics, logs and traces coming from Prometheus, Loki and Jaeger.
 
 > These observability containers are intended for local development only; a hosted observability solution should be used for production.
