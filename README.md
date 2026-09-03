@@ -65,6 +65,24 @@ See below, to start running and testing the solution.
 14. You can now Build, run and test the solution.
         
 
+# Testing with `.http` Files
+
+The API request files are kept with their features under `GamesGlobal.ShoppingList.WebApi`. To test an authenticated request, first run a request from `Identity/Features/Login/Login.http` using the matching local environment, then copy the `Token` value from the response into the corresponding Web API user secret:
+
+| Login request | HTTP environment | User-secret key |
+| --- | --- | --- |
+| End-User Log-in | `local-user` | `HttpTest:EndUserToken` |
+| Super Admin Log-in | `local-admin` | `HttpTest:AdminToken` |
+| Auditor General Log-in | `local-auditor` | `HttpTest:AuditorToken` |
+
+For example, after using the End-User Log-in request, run:
+```powershell
+dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "HttpTest:EndUserToken" "<Token from the login response>"
+```
+
+Select the same `local-user`, `local-admin`, or `local-auditor` environment when running an authenticated `.http` request. The environment configuration reads the token from user secrets, and the request sends it as `Authorization: Bearer {{token}}`. When the token expires, log in again and update the relevant user secret.
+
+
 # Build and Test
 1. Open your solution in Visual Studio / VS Code.
 2. Run the solution and play around with available functionality.
@@ -104,7 +122,7 @@ See below, to start running and testing the solution.
        dotnet ef database update --project .\GamesGlobal.ShoppingList.Infrastructure\GamesGlobal.ShoppingList.Infrastructure.csproj --startup-project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj --context ApplicationDbContext
 
     ```
-    9.2. Please make sure you only submit one migration per feature. if you have multiple migrations please use the following commands to consolodate your migrations into one before asking a fellow dev to review your pull request .
+    9.2. Please make sure you only submit one migration per feature. if you have multiple migrations please use the following commands to consolidate your migrations into one before asking a fellow dev to review your pull request .
 
 ```
     // ef database update {MigrationName} 
@@ -129,7 +147,7 @@ See below, to start running and testing the solution.
 
 ## Modular Application
 
-You have notice in the section above we tend to have seperate DbContext for Application and Identity. This is because we are following a modular architecture approach.
+You have notice in the section above we tend to have separate DbContext for Application and Identity. This is because we are following a modular architecture approach.
 The Identity functionality are on separate module from the application this allows us to have a clear separation of concerns and allows us to develop and test. 
 And if required in the future we can easily move a module into its own solution or application.
 So when developing the application we should always keep in mind points of the applications that could be treated as separate modules and develop in a way that it is always easy to move into separate module afterward.
