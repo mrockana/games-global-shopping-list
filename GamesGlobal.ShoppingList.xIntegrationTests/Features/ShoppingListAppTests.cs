@@ -144,7 +144,7 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         form.Add(fileContent, "file", fileName);
 
         var result = await _apiClient.PostAsync(
-            new Uri($"/shopping-items/{createResponse.ShoppingItemId}/upload-image", UriKind.Relative),
+            new Uri($"/shopping-items/{createResponse.ShoppingItemId.ToString()}/upload-image", UriKind.Relative),
             form);
         result.EnsureSuccessStatusCode();
 
@@ -156,7 +156,7 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         Assert.Equal("image/png", response.MimeType);
         Assert.Equal(OnePixelPng.Length, response.Size);
 
-        var objectName = $"{createResponse.UserCode}/{createResponse.ShoppingItemId}/{fileName}";
+        var objectName = $"{createResponse.UserCode}/{createResponse.ShoppingItemId.ToString()}/{fileName}";
         Assert.Equal(
             $"{_factory.FileObjectStoreUrl}/{GamesGlobalWebApiFactory.FileObjectStoreBucketName}/{objectName}",
             response.Url,
@@ -170,6 +170,10 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         Assert.Equal(objectName, objectStat.ObjectName);
         Assert.Equal(OnePixelPng.Length, objectStat.Size);
         Assert.Equal("image/png", objectStat.ContentType);
+
+        await _factory.MinioClient.RemoveObjectAsync(new RemoveObjectArgs()
+            .WithBucket(GamesGlobalWebApiFactory.FileObjectStoreBucketName)
+            .WithObject(objectName));
     }
 
     [Fact]
@@ -179,7 +183,7 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
         var createResponse = await CreateShoppingItemAsync("Item to delete", "Delete test item");
 
-        var result = await _apiClient.DeleteAsync($"/shopping-item/{createResponse.ShoppingItemId}");
+        var result = await _apiClient.DeleteAsync($"/shopping-item/{createResponse.ShoppingItemId.ToString()}");
         result.EnsureSuccessStatusCode();
 
         var response = await result.Content.ReadFromJsonAsync<DeleteShoppingItemResponse>();
