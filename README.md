@@ -20,7 +20,6 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - Log shipping agent that tails the log files under `./appData/promatail/log` and pushes them into Loki.
 9. **minio**
    - S3 compatible object storage used to store uploaded files such as shopping item images. The S3 API is exposed on port 9000 and the web console on port 9001 (`http://localhost:9001`), signing in with `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`. Its objects are kept in the `minio-data` named volume and from inside the stack it is reachable at `http://minio:9000`.
-10. **grafana**
    - Dashboarding and visualisation tool served on port 3000. It is the single place to view the metrics, logs and traces coming from Prometheus, Loki and Jaeger.
 
 > These observability containers are intended for local development only; a hosted observability solution should be used for production.
@@ -33,9 +32,7 @@ A WebAPI that allows a user to login and maintain a shopping list.
 3. Optionally download and install [pgAdmin](https://www.pgadmin.org/download/) (or any PostgreSQL client, e.g. `psql`) - the compose stack already ships a pgAdmin container on `http://localhost:5050`.
 4. Download and install free [Visual Studio || Visual Studio Code](https://visualstudio.microsoft.com/free-developer-offers/)
 5. Download and install [Git](https://git-scm.com/downloads).
-6. Request access to DevOps from your Team.
-7. Follow the following article to setup SSH to access DevOps, [SSH Article Link](https://learn.microsoft.com/en-us/azure/devops/repos/git/use-ssh-keys-to-authenticate?view=azure-devops).
-8. Download dotnet-ef tool globally using the following command
+6. Download dotnet-ef tool globally using the following command
    ```bash
    dotnet tool install --global dotnet-ef
    ```
@@ -47,18 +44,24 @@ See below, to start running and testing the solution.
 3.	Open terminal on your solution file and run the following command
     - `dotnet restore ./GamesGlobal.ShoppingList.sln`
 4.	Open the solution in Visual Studio / VS Code.
-5.  Open **docker-compose.yml** and set `POSTGRES_PASSWORD` for the `sql.database` service.
-6.  Add the connection string to the user secret with the password created in the last step, under the key `ConnectionStrings:postgres`, for example:
-    - `Host=localhost;Port=5432;Database=ShoppingItemsAppDB;Username=postgres;Password=<your password>;`
-7.  Make sure you set **docker-compose** project as startup project.
-8.  Run the solution to make sure you start the PostgreSQL container.
-9.   Immediately stop the solution and make sure PostgreSQL is still running in Docker Desktop if not please start it again.
-11.  Connect with pgAdmin (`http://localhost:5050`, or a locally installed client / `psql`) using the connection details from the previous steps. This is just to check if you are able to access the database. From the pgAdmin container use host `webapi-app-database`, from a local client use `localhost`.
-12. Run the following [EF Core Migration commands](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
-    - IdentityModule `dotnet ef database update --project .\GamesGlobal.ShoppingList.Infrastructure\GamesGlobal.ShoppingList.Infrastructure.csproj --startup-project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj --context IdentityDbContext`
+5.  Create a `.env` file beside `.env.example` in the repository root. Do not edit `.env.example`; it is the committed template. Use one of the following commands:
+   - PowerShell: `Copy-Item .env.example .env`
+   - Bash: `cp .env.example .env`
+6.  Replace every placeholder value in `.env` with local development values. At minimum, use the same `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` values that you will use in the connection string below. Generate strong, unique values for `IDENTITY_JWT_SIGNING_KEY` and `IDENTITY_HASHED_TOKEN_SIGNING_KEY`.
+
+7.  Configure the Web API's local user secrets. Replace each `<...>` placeholder with the matching value from your `.env` file. These values are needed when running EF Core commands locally:
+   ```powershell
+   dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "ConnectionStrings:postgres" "Host=localhost;Port=5432;Database=<POSTGRES_DB>;Username=<POSTGRES_USER>;Password=<POSTGRES_PASSWORD>;"
+   dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "IdentityModuleOptions:JwtSigningKey" "<IDENTITY_JWT_SIGNING_KEY>"
+   dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "IdentityModuleOptions:HashedTokenSigningKey" "<IDENTITY_HASHED_TOKEN_SIGNING_KEY>"
+   dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "FileObjectStoreOptions:User" "<FILE_OBJECT_STORE_USER>"
+   dotnet user-secrets set --project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj "FileObjectStoreOptions:Secret" "<FILE_OBJECT_STORE_SECRET>"
+   ```
+8.  Make sure you set **docker-compose** project as startup project.
+9. Connect with pgAdmin (`http://localhost:5050`, or a locally installed client / `psql`) using the connection details from the previous steps. This is just to check if you are able to access the database. From the pgAdmin container use host `webapi-app-database`, from a local client use `localhost`.
+10. Run the following [EF Core Migration commands](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
     - ApplicationModule `dotnet ef database update --project .\GamesGlobal.ShoppingList.Infrastructure\GamesGlobal.ShoppingList.Infrastructure.csproj --startup-project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj --context ApplicationDbContext`
-13. Check the database and make sure you can see the newly created tables with seeded data. The application tables live in the `public` schema and the identity tables in the `identity` schema.
-    - Note that PostgreSQL identifiers are case-sensitive here, so hand-written queries must quote them, e.g. `SELECT * FROM identity."Users";`
+11. Check the database and make sure you can see the newly created tables with seeded data. The application tables live in the `public` schema and the identity tables in the `identity` schema.
 14. You can now Build, run and test the solution.
         
 

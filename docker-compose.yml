@@ -39,7 +39,7 @@ services:
             - FileObjectStoreOptions__User=${FILE_OBJECT_STORE_USER}
             - FileObjectStoreOptions__Secret=${FILE_OBJECT_STORE_SECRET}
             - FileObjectStoreOptions__UseSsl=${FILE_OBJECT_STORE_USE_SSL}
-            - FileObjectStoreOptions__BusketName=${FILE_OBJECT_STORE_BUSKET_NAME}
+            - FileObjectStoreOptions__BucketName=${FILE_OBJECT_STORE_BUCKET_NAME}
         volumes:
             - ./appData/logs:/appData/logs
 

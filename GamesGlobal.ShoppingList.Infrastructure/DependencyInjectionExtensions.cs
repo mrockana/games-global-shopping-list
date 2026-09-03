@@ -65,13 +65,16 @@ public static class DependencyInjectionExtensions
         services.Configure<FileObjectStoreOptions>(fileObjectStoreSection);
         services.AddScoped(sp => sp.GetRequiredService<IOptions<FileObjectStoreOptions>>().Value);
 
-        FileObjectStoreOptions options = fileObjectStoreSection.Get<FileObjectStoreOptions>()!;
+        services.AddSingleton<IMinioClient>(sp =>
+        {
+            FileObjectStoreOptions options = sp.GetRequiredService<IOptions<FileObjectStoreOptions>>().Value;
 
-        services.AddMinio(client => client
-            .WithEndpoint(new Uri(options.Url).Authority)
-            .WithCredentials(options.User, options.Secret)
-            .WithSSL(options.UseSsl)
-            .Build());
+            return new MinioClient()
+                .WithEndpoint(new Uri(options.Url).Authority)
+                .WithCredentials(options.User, options.Secret)
+                .WithSSL(options.UseSsl)
+                .Build();
+        });
 
         services.AddTransient<IFileObjectStoreService, FileObjectStore.FileObjectStoreService>();
     }
