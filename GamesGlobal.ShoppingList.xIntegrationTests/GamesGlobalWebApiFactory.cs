@@ -1,4 +1,5 @@
-﻿using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
+﻿using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
+using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -18,6 +19,9 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
 
     public IIdentityDbContext IdentityDbContext => (_serviceScope ??= Services.CreateScope())
         .ServiceProvider.GetRequiredService<IIdentityDbContext>();
+
+    public IApplicationDbContext ApplicationDbContext => (_serviceScope ??= Services.CreateScope())
+        .ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
     public Task InitializeAsync() => _postgres.StartAsync();
 

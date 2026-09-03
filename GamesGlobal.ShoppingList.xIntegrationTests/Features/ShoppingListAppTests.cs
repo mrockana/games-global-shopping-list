@@ -1,16 +1,13 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
+using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.GetShoppingItems;
+using GamesGlobal.ShoppingList.Application.Features.UpdateShoppingItemCommand;
 using GamesGlobal.ShoppingList.Application.Identity.Features.Login;
-using GamesGlobal.ShoppingList.Application.Identity.Features.SignupUser;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests.Features;
-
-[CollectionDefinition(nameof(ShoppingListAppTests), DisableParallelization = true)]
-public sealed class ShoppingListAppTestsCollection
-{
-}
 
 [Collection(nameof(ShoppingListAppTests))]
 public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactory>
@@ -66,32 +63,90 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
     }
 
     [Fact]
-    public async Task SignupUser_WithValidRequest_OkWithCorrect()
+    public async Task CreateShoppingItem_WithValidRequest_CreatesPersistedItem()
     {
-        var email = $"signup-{Guid.NewGuid():N}@email.com";
-        var signupRequest = new SignupCommand(
-            ConfirmPassword: "123Abc123@",
-            Password: "123Abc123@",
-            Email: email,
-            FirstName: "Mr",
-            LastName: "Test");
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+        var itemName = $"create-{Guid.NewGuid():N}";
 
-        var result = await _apiClient.PostAsJsonAsync("/identity/signup", signupRequest);
+        var result = await _apiClient.PostAsJsonAsync("/create-shopping-item", new
+        {
+            Name = itemName,
+            Description = "Created by integration test",
+        });
         result.EnsureSuccessStatusCode();
 
-        var signupResponse = await result.Content.ReadFromJsonAsync<SignupResponse>();
+        var response = await result.Content.ReadFromJsonAsync<CreateShoppingItemResponse>();
 
-        Assert.Equal(signupRequest.Email, signupResponse!.Email);
-        Assert.Equal(signupRequest.FirstName, signupResponse.FirstName);
-        Assert.Equal(signupRequest.LastName, signupResponse.LastName);
-        Assert.NotEqual(default, signupResponse.UserId);
+        Assert.NotNull(response);
+        Assert.Equal(itemName, response.Name);
+        Assert.Equal("Created by integration test", response.Description);
+        Assert.True(response.ShoppingItemId > 0);
 
-        var persistedUser = await _factory.IdentityDbContext.Users
+        var persistedItem = await _factory.ApplicationDbContext.ShoppingItems
             .AsNoTracking()
-            .SingleOrDefaultAsync(user => user.Email == signupRequest.Email);
+            .SingleOrDefaultAsync(item => item.ShoppingItemId == response.ShoppingItemId);
 
-        Assert.NotNull(persistedUser);
-        Assert.Equal(signupResponse.UserId, persistedUser.UserId);
+        Assert.NotNull(persistedItem);
+        Assert.Equal(itemName, persistedItem.Name);
+        Assert.Equal("Created by integration test", persistedItem.Description);
+        Assert.Equal(response.UserCode, persistedItem.UserCode);
+    }
+
+    [Fact]
+    public async Task UpdateShoppingItem_WithValidRequest_UpdatesPersistedItem()
+    {
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+        var createResponse = await CreateShoppingItemAsync("Original item", "Original description");
+        var updatedName = $"update-{Guid.NewGuid():N}";
+
+        var result = await _apiClient.PostAsJsonAsync("/update-shopping-item", new
+        {
+            ShoppingItemId = createResponse.ShoppingItemId,
+            Name = updatedName,
+            Description = "Updated by integration test",
+        });
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<UpdateShoppingItemResponse>();
+
+        Assert.NotNull(response);
+        Assert.Equal(createResponse.ShoppingItemId, response.ShoppingItemId);
+        Assert.Equal(updatedName, response.Name);
+        Assert.Equal("Updated by integration test", response.Description);
+
+        var persistedItem = await _factory.ApplicationDbContext.ShoppingItems
+            .AsNoTracking()
+            .SingleOrDefaultAsync(item => item.ShoppingItemId == createResponse.ShoppingItemId);
+
+        Assert.NotNull(persistedItem);
+        Assert.Equal(updatedName, persistedItem.Name);
+        Assert.Equal("Updated by integration test", persistedItem.Description);
+    }
+
+    [Fact]
+    public async Task DeleteShoppingItem_WithValidRequest_DeletesPersistedItem()
+    {
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+        var createResponse = await CreateShoppingItemAsync("Item to delete", "Delete test item");
+
+        var result = await _apiClient.DeleteAsync($"/shopping-item/{createResponse.ShoppingItemId}");
+        result.EnsureSuccessStatusCode();
+
+        var response = await result.Content.ReadFromJsonAsync<DeleteShoppingItemResponse>();
+
+        Assert.NotNull(response);
+        Assert.Equal(createResponse.ShoppingItemId, response.ShoppingItemId);
+        Assert.Equal(createResponse.Name, response.Name);
+        Assert.Equal(createResponse.Description, response.Description);
+
+        var persistedItem = await _factory.ApplicationDbContext.ShoppingItems
+            .AsNoTracking()
+            .SingleOrDefaultAsync(item => item.ShoppingItemId == createResponse.ShoppingItemId);
+
+        Assert.Null(persistedItem);
     }
 
     private Task<LoginResponse> GetLoginResponseAsync()
@@ -107,5 +162,18 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
 
         return await result.Content.ReadFromJsonAsync<LoginResponse>()
             ?? throw new InvalidOperationException("The login endpoint returned an empty response.");
+    }
+
+    private async Task<CreateShoppingItemResponse> CreateShoppingItemAsync(string name, string description)
+    {
+        var result = await _apiClient.PostAsJsonAsync("/create-shopping-item", new
+        {
+            Name = name,
+            Description = description,
+        });
+        result.EnsureSuccessStatusCode();
+
+        return await result.Content.ReadFromJsonAsync<CreateShoppingItemResponse>()
+            ?? throw new InvalidOperationException("The create shopping item endpoint returned an empty response.");
     }
 }
