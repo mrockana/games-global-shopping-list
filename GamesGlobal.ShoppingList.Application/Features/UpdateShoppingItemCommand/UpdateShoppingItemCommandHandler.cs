@@ -61,7 +61,7 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
     }
 }
 
-public sealed record UpdateShoppingItemCommandRequest(int ShoppingItemId, string Name, string? Description)
+public sealed record UpdateShoppingItemCommandRequest(long ShoppingItemId, string Name, string? Description)
     : ICommand<UpdateShoppingItemResponse>
 {
 }
