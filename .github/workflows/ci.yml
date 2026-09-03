@@ -8,10 +8,28 @@ on:
 
 env:
   SOLUTION: GamesGlobal.ShoppingList.sln
+  UNIT_TESTS_PROJECT: GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xUnitTests.csproj
+  INTEGRATION_TESTS_PROJECT: GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xIntegrationTests.csproj
   BUILD_CONFIGURATION: Release
   COVERAGE_THRESHOLD: 50
 
 jobs:
+  integration-tests:
+    name: Run integration tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Dotnet test
+        run: >-
+          dotnet test ${{ env.INTEGRATION_TESTS_PROJECT }}
+          --configuration ${{ env.BUILD_CONFIGURATION }}
+
   code-quality:
     name: Check code quality
     runs-on: windows-latest
@@ -60,7 +78,7 @@ jobs:
 
       - name: Dotnet test
         run: >-
-          dotnet test ${{ env.SOLUTION }}
+          dotnet test ${{ env.UNIT_TEST_PROJECT }}
           --configuration ${{ env.BUILD_CONFIGURATION }}
           --logger "trx;LogFileName=test-results.trx"
           --results-directory ${{ github.workspace }}/TestResults
