@@ -21,6 +21,14 @@ jobs:
       IdentityModuleOptions__ApplicationUrl: https://localhost:7223
       IdentityModuleOptions__JwtSigningKey: ci-test-jwt-signing-key-must-be-long-enough
       IdentityModuleOptions__HashedTokenSigningKey: ci-test-hashed-token-signing-key
+      MINIO_ROOT_USER: ci-minioadmin-test
+      MINIO_ROOT_PASSWORD: ci-minioadmin-test
+      MINIO_DEFAULT_BUCKETS: my-bucket
+      FileObjectStoreOptions__Url: http://minio:9000
+      FileObjectStoreOptions__User: ci-minioadmin-test
+      FileObjectStoreOptions__Secret: ci-minioadmin-test
+      FileObjectStoreOptions__UseSsl: false
+      FileObjectStoreOptions__BucketName: my-bucket
       ASPNETCORE_ENVIRONMENT: Development
     steps:
       - uses: actions/checkout@v4
