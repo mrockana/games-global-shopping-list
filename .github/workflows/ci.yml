@@ -8,7 +8,7 @@ on:
 
 env:
   SOLUTION: GamesGlobal.ShoppingList.sln
-  UNIT_TESTS_PROJECT: GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xUnitTests.csproj
+  UNIT_TESTS_PROJECT: GamesGlobal.ShoppingList.xUnitTests/GamesGlobal.ShoppingList.xUnitTests.csproj
   INTEGRATION_TESTS_PROJECT: GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xIntegrationTests.csproj
   BUILD_CONFIGURATION: Release
   COVERAGE_THRESHOLD: 50
