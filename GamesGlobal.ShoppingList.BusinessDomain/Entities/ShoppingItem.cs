@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 
@@ -20,4 +22,6 @@ public sealed class ShoppingItem : BaseEntity
 
     [Required]
     public string? Description { get; set; }
+
+    public ICollection<Document> Documents { get; set; } = new Collection<Document>();
 }

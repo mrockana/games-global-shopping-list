@@ -9,8 +9,8 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasMany(r => r.Roles)
-       .WithMany(u => u.Users)
+        builder.HasMany(u => u.Roles)
+       .WithMany(r => r.Users)
        .UsingEntity<UserRole>(
        j =>
        {
