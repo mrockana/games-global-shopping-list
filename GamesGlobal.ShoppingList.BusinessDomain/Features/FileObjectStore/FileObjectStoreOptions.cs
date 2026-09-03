@@ -1,4 +1,6 @@
-﻿namespace GamesGlobal.ShoppingList.BusinessDomain.Features.FileObjectStore;
+﻿using System.Collections.Generic;
+
+namespace GamesGlobal.ShoppingList.BusinessDomain.Features.FileObjectStore;
 
 public sealed class FileObjectStoreOptions
 {
@@ -10,5 +12,16 @@ public sealed class FileObjectStoreOptions
 
     public bool UseSsl { get; set; }
 
-    public string BusketName { get; set; } = string.Empty;
+    public string BucketName { get; set; } = string.Empty;
+
+    public long MaxImageSizeInBytes { get; set; } = 10 * 1024 * 1024;
+
+    public int MaxObjectNameLength { get; set; } = 200;
+
+    public IReadOnlyCollection<string> AllowedContentTypes { get; set; } =
+    [
+        "image/png",
+        "image/jpeg",
+        "application/octet-stream",
+    ];
 }
