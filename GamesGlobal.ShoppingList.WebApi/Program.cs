@@ -3,6 +3,7 @@ using GamesGlobal.ShoppingList.BusinessDomain;
 using GamesGlobal.ShoppingList.Infrastructure;
 using GamesGlobal.ShoppingList.WebApi;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
+using GamesGlobal.ShoppingList.WebApi.Common.RateLimiting;
 using GamesGlobal.ShoppingList.WebApi.Common.ResponseHandling;
 using GamesGlobal.ShoppingList.WebApi.Identity;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,7 @@ builder.Services.AddApplicationServices(configuration);
 builder.Services.AddBusinessDomainServices(configuration);
 builder.Services.AddIdentityAuth(configuration);
 builder.Services.AddTransient<NonSuccessResponseMiddleware>();
+builder.Services.SetupRateLimiter(configuration);
 
 var app = builder.Build();
 
@@ -41,6 +43,7 @@ app.UseMiddleware<NonSuccessResponseMiddleware>();
 app.UseHttpLogging();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 app.MapOpenApi();
 app.MapScalarApiReference("/docs");
 app.UseHttpsRedirection();

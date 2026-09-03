@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using RateLimiterConstants = GamesGlobal.ShoppingList.WebApi.Common.RateLimiting.RateLimiterConstants;
 
 namespace GamesGlobal.ShoppingList.WebApi.Identity.Features.UpdateRolePermissions;
 
@@ -26,6 +27,7 @@ internal sealed class UpdateRolePermissionsEndpoint : IEndpoint
        .WithName("update-role-permissions")
        .AddEndpointFilter<ResponseHandlingFilter>()
        .Produces<UpdateRolePermissionsResponse>()
+       .RequireRateLimiting(RateLimiterConstants.PerUserLimiterPolicyName)
        .WithTags(EndpointTags.Identity);
     }
 }

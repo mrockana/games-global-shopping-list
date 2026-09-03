@@ -35,15 +35,33 @@ internal sealed class NonSuccessResponseMiddleware : IMiddleware
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
                 HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
 
+                var title = context.Response.StatusCode == StatusCodes.Status429TooManyRequests
+                    ? ProblemDetailTitleConstants.TooManyRequestsTitle
+                    : ProblemDetailTitleConstants.GeneralExceptionTitle;
+
                 ProblemDetails problemDetails = new();
-                problemDetails.Title = ProblemDetailTitleConstants.GeneralExceptionTitle;
+                problemDetails.Title = title;
                 problemDetails.Type = statusCode.GetDescription();
                 problemDetails.Status = context.Response.StatusCode;
-                problemDetails.Detail = ProblemDetailTitleConstants.GeneralExceptionTitle;
+                problemDetails.Detail = title;
                 problemDetails.Extensions.Add("traceId", traceId);
 
                 await context.Response.WriteAsJsonAsync(problemDetails, context.RequestAborted);
             }
+        }
+        catch (TaskCanceledException)
+        {
+            var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+            _logger.LogWarning("Request was cancelled: {TrackingNumber}", traceId);
+            context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
+            memoryStream.Seek(0, SeekOrigin.Begin);
+        }
+        catch (OperationCanceledException)
+        {
+            var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+            _logger.LogWarning("Request was cancelled: {TrackingNumber}", traceId);
+            context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
+            memoryStream.Seek(0, SeekOrigin.Begin);
         }
         catch (Exception ex)
         {
@@ -65,11 +83,14 @@ internal sealed class NonSuccessResponseMiddleware : IMiddleware
             // Reset the response body stream position to the beginning
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            // Copy the contents of the memory stream to the original response body stream
-            await memoryStream.CopyToAsync(originalBodyStream, context.RequestAborted);
+            if (!context.RequestAborted.IsCancellationRequested)
+            {
+                // Copy the contents of the memory stream to the original response body stream
+                await memoryStream.CopyToAsync(originalBodyStream, context.RequestAborted);
 
-            // Restore the original response body stream
-            context.Response.Body = originalBodyStream;
+                // Restore the original response body stream
+                context.Response.Body = originalBodyStream;
+            }
         }
     }
 }
