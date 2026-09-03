@@ -20,7 +20,10 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - Log shipping agent that tails the log files under `./appData/promatail/log` and pushes them into Loki.
 9. **minio**
    - S3 compatible object storage used to store uploaded files such as shopping item images. The S3 API is exposed on port 9000 and the web console on port 9001 (`http://localhost:9001`), signing in with `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`. Its objects are kept in the `minio-data` named volume and from inside the stack it is reachable at `http://minio:9000`.
-   - Dashboarding and visualisation tool served on port 3000. It is the single place to view the metrics, logs and traces coming from Prometheus, Loki and Jaeger.
+10. **redis**
+   - Redis 7 (`redis:7-alpine`) used as the distributed cache for the web api. It listens on port 6379, persists to the `redis-data` named volume and from inside the stack it is reachable at `redis:6379` (see the `ConnectionStrings__redis` environment variable).
+11. **grafana**
+   - Dashboarding and visualisation tool served on port 3000.
 
 > These observability containers are intended for local development only; a hosted observability solution should be used for production.
 
@@ -88,6 +91,26 @@ Select the same `local-user`, `local-admin`, or `local-auditor` environment when
 2. Run the solution and play around with available functionality.
 3. Run the following command to Unit test the solution
   `dotnet test .\GamesGlobal.ShoppingList.sln`
+
+## Clearing the Redis cache
+
+While testing you may need to drop cached values so the next request hits the database again.
+
+1. Open a shell inside the running `redis` container and start the Redis CLI:
+   ```powershell
+   docker exec -it redis redis-cli
+   ```
+2. From the `redis-cli` prompt clear the cache:
+   ```
+   FLUSHALL
+   ```
+   - `FLUSHALL` removes the keys from every database, use `FLUSHDB` to only clear the currently selected one.
+   - Type `KEYS *` to confirm nothing is left, `CLEAR` (or the `cls` shortcut in your terminal) to clean up the screen and `exit` to leave the CLI.
+
+Alternatively you can run it as a one liner without entering the CLI:
+```powershell
+docker exec -it redis redis-cli FLUSHALL
+```
 
 # Contribute
 

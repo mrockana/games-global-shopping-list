@@ -1,4 +1,6 @@
 using System.Text;
+using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Features;
 using GamesGlobal.ShoppingList.Application.Features.UploadShoppingItemImage;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
@@ -21,6 +23,7 @@ public sealed class UploadShoppingItemImageCommandHandlerTests
     private readonly IFileObjectStoreService _fileObjectStoreService = Substitute.For<IFileObjectStoreService>();
     private readonly ILogger<UploadShoppingItemImageCommandHandler> _logger = Substitute.For<ILogger<UploadShoppingItemImageCommandHandler>>();
     private readonly FileObjectStoreOptions _options = new() { Url = "http://localhost:9000", BucketName = BucketName };
+    private readonly ICacheService _cacheService = Substitute.For<ICacheService>();
 
     [Fact]
     public async Task Handle_UserDoesNotExist_ReturnsApplicationException()
@@ -118,6 +121,7 @@ public sealed class UploadShoppingItemImageCommandHandlerTests
 
         await _fileObjectStoreService.Received(1).UploadObject(BucketName, expectedKey, command.Content, "image/png", command.Length, Arg.Any<CancellationToken>());
         Assert.Single(item.Documents);
+        await _cacheService.Received(1).RemoveAsync(ShoppingItemCacheKeys.ForUser(userCode), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -166,7 +170,7 @@ public sealed class UploadShoppingItemImageCommandHandlerTests
 
     private UploadShoppingItemImageCommandHandler CreateHandler()
     {
-        return new UploadShoppingItemImageCommandHandler(_repository, _identityRepository, _fileObjectStoreService, _options, _logger);
+        return new UploadShoppingItemImageCommandHandler(_repository, _identityRepository, _fileObjectStoreService, _options, _logger, _cacheService);
     }
 
     private void GivenUser(Guid userCode)

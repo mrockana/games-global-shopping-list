@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using GamesGlobal.ShoppingList.Application.Common;
+using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DomainException;
@@ -20,13 +21,19 @@ public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandle
     private readonly IIdentityRepository _identityRepository;
     private readonly ILogger<CreateShoppingItemCommandHandler> _logger;
     private readonly ActivitySource _activitySource;
+    private readonly ICacheService _cacheService;
 
-    public CreateShoppingItemCommandHandler(IApplicationRepository repository, ILogger<CreateShoppingItemCommandHandler> logger, IIdentityRepository identityRepository)
+    public CreateShoppingItemCommandHandler(
+        IApplicationRepository repository,
+        ILogger<CreateShoppingItemCommandHandler> logger,
+        IIdentityRepository identityRepository,
+        ICacheService cacheService)
     {
         _repository = repository;
         _logger = logger;
         _activitySource = DiagnosticConfig.ActivitySource;
         _identityRepository = identityRepository;
+        _cacheService = cacheService;
     }
 
     public async Task<Result<CreateShoppingItemResponse>> Handle(CreateShoppingItemCommandRequest request, CancellationToken cancellationToken = default)
@@ -57,6 +64,7 @@ public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandle
             return Result.CreateErrorResult<CreateShoppingItemResponse>(new DomainApplicationException("Failed to create shopping item."));
         }
 
+        await _cacheService.RemoveAsync(ShoppingItemCacheKeys.ForUser(user.UserCode), cancellationToken);
         Result<CreateShoppingItemResponse> response = Result.CreateResult<CreateShoppingItemResponse>(domainModelResult.ToCreateShoppingItemResponse());
 
         return response;

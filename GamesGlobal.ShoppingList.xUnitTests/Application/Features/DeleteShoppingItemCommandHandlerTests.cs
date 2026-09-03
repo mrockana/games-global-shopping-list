@@ -1,3 +1,5 @@
+using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Features;
 using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
@@ -13,6 +15,7 @@ public sealed class DeleteShoppingItemCommandHandlerTests
 {
     private readonly IApplicationRepository _repository = Substitute.For<IApplicationRepository>();
     private readonly ILogger<DeleteShoppingItemCommandHandler> _logger = Substitute.For<ILogger<DeleteShoppingItemCommandHandler>>();
+    private readonly ICacheService _cacheService = Substitute.For<ICacheService>();
 
     [Fact]
     public async Task Handle_ItemDoesNotExist_ReturnsNotFoundException()
@@ -20,7 +23,7 @@ public sealed class DeleteShoppingItemCommandHandlerTests
         _repository.GetSingleAsync(Arg.Any<Specification<ShoppingItem>>(), Arg.Any<CancellationToken>()).Returns((ShoppingItem?)null);
 
         // Act
-        var result = await new DeleteShoppingItemCommandHandler(_repository, _logger).Handle(new DeleteShoppingItemCommand(12));
+        var result = await CreateHandler().Handle(new DeleteShoppingItemCommand(12, Guid.NewGuid()));
 
         // Assert
         Assert.True(result.HasError);
@@ -28,15 +31,28 @@ public sealed class DeleteShoppingItemCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_ItemBelongsToAnotherUser_ReturnsForbiddenException()
+    {
+        var item = new ShoppingItem { ShoppingItemId = 12, UserCode = Guid.NewGuid(), Name = "Milk", Description = "Two litres" };
+        _repository.GetSingleAsync(Arg.Any<Specification<ShoppingItem>>(), Arg.Any<CancellationToken>()).Returns(item);
+
+        var result = await CreateHandler().Handle(new DeleteShoppingItemCommand(item.ShoppingItemId, Guid.NewGuid()));
+
+        Assert.True(result.HasError);
+        Assert.IsType<DomainForbiddenActionException>(result.Error);
+        _repository.DidNotReceive().Delete(item);
+    }
+
+    [Fact]
     public async Task Handle_SaveFails_ReturnsApplicationException()
     {
-        var item = new ShoppingItem { ShoppingItemId = 12, Name = "Milk", Description = "Two litres" };
+        var item = new ShoppingItem { ShoppingItemId = 12, UserCode = Guid.NewGuid(), Name = "Milk", Description = "Two litres" };
         _repository.GetSingleAsync(Arg.Any<Specification<ShoppingItem>>(), Arg.Any<CancellationToken>()).Returns(item);
         _repository.SaveAsync(Arg.Any<CancellationToken>()).Returns(0);
         _repository.SavedSuccessful(0).Returns(false);
 
         // Act
-        var result = await new DeleteShoppingItemCommandHandler(_repository, _logger).Handle(new DeleteShoppingItemCommand(item.ShoppingItemId));
+        var result = await CreateHandler().Handle(new DeleteShoppingItemCommand(item.ShoppingItemId, item.UserCode));
 
         // Assert
         Assert.True(result.HasError);
@@ -53,21 +69,24 @@ public sealed class DeleteShoppingItemCommandHandlerTests
         _repository.SavedSuccessful(1).Returns(true);
 
         // Act
-        var result = await new DeleteShoppingItemCommandHandler(_repository, _logger).Handle(new DeleteShoppingItemCommand(item.ShoppingItemId));
+        var result = await CreateHandler().Handle(new DeleteShoppingItemCommand(item.ShoppingItemId, item.UserCode));
 
         // Assert
         Assert.False(result.HasError);
         Assert.Equal(item.ShoppingItemId, result.Value?.ShoppingItemId);
         _repository.Received(1).Delete(item);
+        await _cacheService.Received(1).RemoveAsync(ShoppingItemCacheKeys.ForUser(item.UserCode), Arg.Any<CancellationToken>());
     }
 
     [Theory]
     [ClassData(typeof(EmptyOrNegativePrimaryKeyId))]
     public void Validation_ShoppingItemIdIsEmptyOrNegative_ReturnsInvalid(long shoppingItemId)
     {
-        var result = new DeleteShoppingItemValidation().Validate(new DeleteShoppingItemCommand(shoppingItemId));
+        var result = new DeleteShoppingItemValidation().Validate(new DeleteShoppingItemCommand(shoppingItemId, Guid.NewGuid()));
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, error => error.PropertyName.Equals(nameof(DeleteShoppingItemCommand.ShoppingItemId), StringComparison.InvariantCulture));
     }
+
+    private DeleteShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _cacheService);
 }

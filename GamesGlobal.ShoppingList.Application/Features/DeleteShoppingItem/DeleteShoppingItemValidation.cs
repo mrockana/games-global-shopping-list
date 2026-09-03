@@ -8,5 +8,6 @@ public sealed class DeleteShoppingItemValidation : AbstractValidator<DeleteShopp
     {
         RuleFor(r => r.ShoppingItemId)
             .GreaterThan(0).WithMessage($"{nameof(DeleteShoppingItemCommand.ShoppingItemId)} must be greater than zero");
+        RuleFor(r => r.UserCode).NotEmpty().WithMessage($"{nameof(DeleteShoppingItemCommand.UserCode)} is required");
     }
 }
