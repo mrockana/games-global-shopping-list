@@ -29,7 +29,9 @@ services:
         environment:
             - OtelExport__Endpoint=http://otel-collector:4317
             - ConnectionStrings__postgres=Host=webapi-app-database;Port=5432;Database=ShoppingItemsAppDB;Username=postgres;Password=yourStrong(!)Password;
-        
+        volumes:
+            - ./appData/logs:/appData/logs
+
 
     sql.database:
         container_name: webapi-app-database

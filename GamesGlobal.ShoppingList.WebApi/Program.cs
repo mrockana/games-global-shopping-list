@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
 IConfiguration configuration = builder.Configuration;
 
-builder.Host.ConfigureSeriLog(configuration, builder.Environment.IsDevelopment());
+builder.Host.ConfigureSerilog(configuration, builder.Environment.IsDevelopment());
 
 builder.Logging.SetupOpenTelemetryLogging();
 

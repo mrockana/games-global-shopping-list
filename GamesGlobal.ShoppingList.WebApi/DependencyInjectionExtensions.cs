@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.OpenTelemetry;
 using static GamesGlobal.ShoppingList.WebApi.Common.WebApiConstants;
 using CommomConstants = GamesGlobal.ShoppingList.Application.Common.Constants;
 
@@ -14,7 +18,7 @@ namespace GamesGlobal.ShoppingList.WebApi;
 
 internal static class DependencyInjectionExtensions
 {
-    internal static void ConfigureSeriLog(this ConfigureHostBuilder hostBuilder, IConfiguration configuration, bool isDevelopment = true)
+    internal static void ConfigureSerilog(this ConfigureHostBuilder hostBuilder, IConfiguration configuration, bool isDevelopment = true)
     {
         string otelExportUrl = configuration.GetValue<string>("OtelExport:Endpoint") ?? string.Empty;
 
@@ -40,7 +44,7 @@ internal static class DependencyInjectionExtensions
 
     internal static void SetupOpenTelemetryLogging(this ILoggingBuilder loggingBuilder)
     {
-        loggingBuilder.ClearProviders()
+        loggingBuilder
             .AddDebug()
             .AddOpenTelemetry(options =>
             {
