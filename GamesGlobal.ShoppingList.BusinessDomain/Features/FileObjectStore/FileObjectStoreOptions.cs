@@ -21,7 +21,6 @@ public sealed class FileObjectStoreOptions
     public IReadOnlyCollection<string> AllowedContentTypes { get; set; } =
     [
         "image/png",
-        "image/jpeg",
-        "application/octet-stream",
+        "image/jpeg"
     ];
 }
