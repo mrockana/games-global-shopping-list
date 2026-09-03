@@ -17,6 +17,11 @@ jobs:
   integration-tests:
     name: Run integration tests
     runs-on: ubuntu-latest
+    env:
+      IdentityModuleOptions__ApplicationUrl: https://localhost:7223
+      IdentityModuleOptions__JwtSigningKey: ci-test-jwt-signing-key-must-be-long-enough
+      IdentityModuleOptions__HashedTokenSigningKey: ci-test-hashed-token-signing-key
+      ASPNETCORE_ENVIRONMENT: Development
     steps:
       - uses: actions/checkout@v4
 
