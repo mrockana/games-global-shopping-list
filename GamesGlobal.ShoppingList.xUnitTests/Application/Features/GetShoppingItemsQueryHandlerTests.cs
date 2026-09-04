@@ -60,7 +60,7 @@ public sealed class GetShoppingItemsQueryHandlerTests
         Guid userCode = Guid.NewGuid();
         IList<GetShoppingItemResponse> cachedItems = new List<GetShoppingItemResponse>
         {
-            new(12, userCode, "Milk", "Two litres"),
+            new(12, userCode, "Milk", "Two litres", []),
         };
         _identityRepository.GetSingleAsync(Arg.Any<Specification<User>>(), Arg.Any<CancellationToken>()).Returns(new User { UserCode = userCode });
         _cacheService.GetAsync<IList<GetShoppingItemResponse>>(ShoppingItemCacheKeys.ForUser(userCode), Arg.Any<CancellationToken>()).Returns(cachedItems);

@@ -56,12 +56,15 @@ public sealed class GetShoppingItemsQueryHandler : IApplicationRequestHandler<Ge
 
         string cacheKey = ShoppingItemCacheKeys.ForUser(user.UserCode);
         IList<GetShoppingItemResponse>? cachedShoppingItems = await _cacheService.GetAsync<IList<GetShoppingItemResponse>>(cacheKey, cancellationToken);
+
         if (cachedShoppingItems is not null)
         {
             return Result.CreateResult(cachedShoppingItems);
         }
 
-        var findShoppingItemsByUserIdSpecification = new FindShoppingItemByUserCode(user!.UserCode).NoTracking();
+        var findShoppingItemsByUserIdSpecification = new FindShoppingItemByUserCode(user!.UserCode)
+            .Include(s => s.Documents)
+            .NoTracking();
         var shoppingItemsDomain = await _appRepository.GetAsync(findShoppingItemsByUserIdSpecification, cancellationToken);
 
         var shoppingItems = shoppingItemsDomain.Select(d => d.ToGetShoppingItemResponse()).ToList();
