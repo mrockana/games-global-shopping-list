@@ -23,7 +23,11 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - S3 compatible object storage used to store uploaded files such as shopping item images. The S3 API is exposed on port 9000 and the web console on port 9001 (`http://localhost:9001`), signing in with `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`. Its objects are kept in the `minio-data` named volume and from inside the stack it is reachable at `http://minio:9000`.
 10. **redis**
    - Redis 7 (`redis:7-alpine`) used as the distributed cache for the web api. It listens on port 6379, persists to the `redis-data` named volume and from inside the stack it is reachable at `redis:6379` (see the `ConnectionStrings__redis` environment variable).
-11. **grafana**
+11. **ollama**
+   - Ollama service used to generate embeddings for semantic search. It is available on port 11434 and persists models in the `ollama-data` named volume.
+12. **ollama-model-loader**
+   - Initialization service that waits for Ollama and pulls the `embeddinggemma` model.
+13. **grafana**
    - Dashboarding and visualisation tool served on port 3000.
 
 > These observability containers are intended for local development only; a hosted observability solution should be used for production.
