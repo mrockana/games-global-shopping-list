@@ -6,7 +6,7 @@ A WebAPI that allows a user to login and maintain a shopping list.
 1. **gamesglobal.shoppinglist.webapi**
    - This container runs our web api GamesGlobal.ShoppingList.WebAPI. It is exposed on ports 8000 (https) and 8001 (http) and exports its telemetry to the OpenTelemetry collector.
 2. **sql.database**
-   - PostgreSQL 17 (`postgres:17`) that our application uses to persist data. It listens on port 5432 and stores its data in the `postgres-data` Docker named volume.
+   - PostgreSQL 17 with the `pgvector` extension (`pgvector/pgvector:pg17`) that our application uses to persist data and to run vector searches.
    - pgAdmin 4 web client for browsing and querying the PostgreSQL database. Its UI is available on port 5050 (`http://localhost:5050`), it logs in with `PGADMIN_DEFAULT_EMAIL` / `PGADMIN_DEFAULT_PASSWORD` and keeps its settings in the `pgadmin-data` named volume. From inside the stack connect to host `webapi-app-database` on port 5432.
 4. **otel-collector**
    - OpenTelemetry Collector that receives logs, traces and metrics from the web api over OTLP (ports 4317/4318). It then fans that telemetry out to Jaeger, Prometheus and Loki.

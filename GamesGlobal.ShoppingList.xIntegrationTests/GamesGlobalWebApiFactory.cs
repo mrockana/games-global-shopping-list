@@ -19,7 +19,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
     private const string MinioAccessKey = "minioadmin";
     private const string MinioSecretKey = "minioadmin";
 
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17")
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("pgvector/pgvector:pg17")
        .Build();
 
     private readonly MinioContainer _minio = new MinioBuilder("minio/minio:latest")
