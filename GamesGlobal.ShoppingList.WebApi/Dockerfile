@@ -17,7 +17,6 @@ COPY ["./GamesGlobal.ShoppingList.WebApi/GamesGlobal.ShoppingList.WebApi.csproj"
 COPY ["./GamesGlobal.ShoppingList.Application/GamesGlobal.ShoppingList.Application.csproj", "GamesGlobal.ShoppingList.Application/"]
 COPY ["./GamesGlobal.ShoppingList.BusinessDomain/GamesGlobal.ShoppingList.BusinessDomain.csproj", "GamesGlobal.ShoppingList.BusinessDomain/"]
 COPY ["./GamesGlobal.ShoppingList.Infrastructure/GamesGlobal.ShoppingList.Infrastructure.csproj", "GamesGlobal.ShoppingList.Infrastructure/"]
-COPY ["./GamesGlobal.ShoppingList.Common/GamesGlobal.ShoppingList.Common.csproj", "GamesGlobal.ShoppingList.Common/"]
 COPY ["./GamesGlobal.ShoppingList.xUnitTests/GamesGlobal.ShoppingList.xUnitTests.csproj", "GamesGlobal.ShoppingList.xUnitTests/"]
 
 COPY . .
