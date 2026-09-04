@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Minio" />
+    <PackageReference Include="Pgvector" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
 

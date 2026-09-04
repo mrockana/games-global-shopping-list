@@ -9,5 +9,6 @@ internal sealed class ShoppingItemConfiguration : IEntityTypeConfiguration<Shopp
     public void Configure(EntityTypeBuilder<ShoppingItem> builder)
     {
         builder.HasIndex(shoppingItem => shoppingItem.UserCode);
+        builder.Property(shoppingItem => shoppingItem.Embeddings).HasColumnType("vector(768)");
     }
 }
