@@ -18,6 +18,7 @@ COPY ["./GamesGlobal.ShoppingList.Application/GamesGlobal.ShoppingList.Applicati
 COPY ["./GamesGlobal.ShoppingList.BusinessDomain/GamesGlobal.ShoppingList.BusinessDomain.csproj", "GamesGlobal.ShoppingList.BusinessDomain/"]
 COPY ["./GamesGlobal.ShoppingList.Infrastructure/GamesGlobal.ShoppingList.Infrastructure.csproj", "GamesGlobal.ShoppingList.Infrastructure/"]
 COPY ["./GamesGlobal.ShoppingList.xUnitTests/GamesGlobal.ShoppingList.xUnitTests.csproj", "GamesGlobal.ShoppingList.xUnitTests/"]
+COPY ["./GamesGlobal.ShoppingList.xIntegrationTests/GamesGlobal.ShoppingList.xIntegrationTests.csproj", "GamesGlobal.ShoppingList.xIntegrationTests/"]
 
 COPY . .
 
