@@ -1,6 +1,7 @@
 ﻿using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Entities;
 using GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.EntityConfiguration;
+using GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.SeedData;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application;

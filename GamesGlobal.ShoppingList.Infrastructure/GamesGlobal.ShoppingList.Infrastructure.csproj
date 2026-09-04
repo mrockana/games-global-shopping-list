@@ -31,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="DataAccess\Application\SeedData\ShoppingItems.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GamesGlobal.ShoppingList.Application\GamesGlobal.ShoppingList.Application.csproj" />
     <ProjectReference Include="..\GamesGlobal.ShoppingList.BusinessDomain\GamesGlobal.ShoppingList.BusinessDomain.csproj" />
   </ItemGroup>
