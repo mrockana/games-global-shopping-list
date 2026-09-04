@@ -30,7 +30,7 @@ public static class DependencyInjectionExtensions
         {
             var connectionString = configuration.GetConnectionString(DataAccessConstants.PostgresConnectionStringName);
             options
-            .UseNpgsql(connectionString)
+            .UseNpgsql(connectionString, o => o.UseVector())
             .AddInterceptors(sp.GetRequiredService<AuditFieldsModificationInterceptor>());
 
             if (isDevelopment)
@@ -46,7 +46,7 @@ public static class DependencyInjectionExtensions
             options
             .UseNpgsql(
                 connectionString,
-                o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, DataAccessConstants.IdentitySchema))
+                o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, DataAccessConstants.IdentitySchema).UseVector())
             .AddInterceptors(sp.GetRequiredService<AuditFieldsModificationInterceptor>());
 
             if (isDevelopment)
