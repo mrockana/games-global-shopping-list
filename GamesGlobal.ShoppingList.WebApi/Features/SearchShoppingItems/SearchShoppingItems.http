@@ -1,0 +1,6 @@
+@url=shopping-items/search?Search=Breakfast
+
+
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+GET {{baseUrl}}/{{url}}
+Authorization: Bearer {{token}}

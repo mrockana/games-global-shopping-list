@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Minio" />
       <PackageReference Include="Npgsql" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
       <PackageReference Include="Pgvector.EntityFrameworkCore" />
     <PackageReference Include="Testcontainers.Minio" />
     <PackageReference Include="Testcontainers.PostgreSql" />
