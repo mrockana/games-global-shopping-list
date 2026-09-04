@@ -120,6 +120,7 @@ public static class DependencyInjectionExtensions
         await using IdentityDbContext identityContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DataPersistenceMigration");
 
+        OllamaEmbeddingOptions embeddingOptions = scope.ServiceProvider.GetRequiredService<OllamaEmbeddingOptions>();
         try
         {
             if ((await applicationContext!.Database.GetPendingMigrationsAsync()).Any())
@@ -132,7 +133,10 @@ public static class DependencyInjectionExtensions
                 await identityContext.Database.MigrateAsync();
             }
 
-            await applicationContext.PostMigrationShoppingItemsSeeding(scope.ServiceProvider.GetRequiredService<IEmbeddingService>());
+            if (embeddingOptions.EnableEmbeddingMigrationsTestOnly)
+            {
+                await applicationContext.PostMigrationEmbeddingsSeeding(scope.ServiceProvider.GetRequiredService<IEmbeddingService>());
+            }
         }
         catch (Exception ex)
         {

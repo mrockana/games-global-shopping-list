@@ -9,4 +9,6 @@ public sealed class OllamaEmbeddingOptions
     public int Dimensions { get; init; }
 
     public string EmbedEndpoint { get; init; } = string.Empty;
+
+    public bool EnableEmbeddingMigrationsTestOnly { get; set; }
 }

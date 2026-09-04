@@ -16,7 +16,7 @@ internal static class ApplicationDbContextDataSeed
 {
     private const string ShoppingItemsResourceName = "GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.SeedData.ShoppingItems.json";
 
-    internal static async Task PostMigrationShoppingItemsSeeding(
+    internal static async Task PostMigrationEmbeddingsSeeding(
         this ApplicationDbContext context,
         IEmbeddingService embeddingService,
         CancellationToken cancellationToken = default)
