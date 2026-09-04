@@ -3,18 +3,20 @@ using System;
 using GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Pgvector;
 
 #nullable disable
 
 namespace GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260904114659_EnablePgvector")]
+    partial class EnablePgvector
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,9 +75,6 @@ namespace GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.Migrati
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Vector>("Embeddings")
-                        .HasColumnType("vector(768)");
-
                     b.Property<DateTime?>("Modified")
                         .HasColumnType("timestamp with time zone");
 
@@ -91,6 +90,24 @@ namespace GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.Migrati
                     b.HasIndex("UserCode");
 
                     b.ToTable("ShoppingItems");
+
+                    b.HasData(
+                        new
+                        {
+                            ShoppingItemId = 1L,
+                            Created = new DateTime(2025, 4, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Blue denim jean, medium size.",
+                            Name = "Pants",
+                            UserCode = new Guid("d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f")
+                        },
+                        new
+                        {
+                            ShoppingItemId = 2L,
+                            Created = new DateTime(2025, 4, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "White plain shirt, medium size.",
+                            Name = "Shirt",
+                            UserCode = new Guid("d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f")
+                        });
                 });
 
             modelBuilder.Entity("GamesGlobal.ShoppingList.BusinessDomain.Entities.ShoppingItemDocument", b =>

@@ -18,7 +18,7 @@ internal sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.AddApplicationDbContextDataSeed();
+        modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfiguration(new ShoppingItemConfiguration());
         modelBuilder.ApplyConfiguration(new ShoppingItemDocumentConfiguration());
     }

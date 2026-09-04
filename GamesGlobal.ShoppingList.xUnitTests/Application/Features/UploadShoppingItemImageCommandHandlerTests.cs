@@ -12,7 +12,7 @@ using GamesGlobal.ShoppingList.BusinessDomain.Identity.Entities;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-namespace GamesGlobal.ShoppingList.xUnitTests.Application.Features.UploadShoppingItemImage;
+namespace GamesGlobal.ShoppingList.xUnitTests.Application.Features;
 
 public sealed class UploadShoppingItemImageCommandHandlerTests
 {

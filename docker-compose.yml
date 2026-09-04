@@ -7,6 +7,7 @@ volumes:
     pgadmin-data:
     minio-data:
     redis-data:
+    ollama-data:
 
 services:
     gamesglobal.shoppinglist.webapi:
@@ -32,6 +33,8 @@ services:
                 condition: service_started
             redis:
                 condition: service_started
+            ollama-model-loader:
+                condition: service_completed_successfully
         environment:
             - OtelExport__Endpoint=http://otel-collector:4317
             - ConnectionStrings__postgres=Host=webapi-app-database;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
@@ -44,13 +47,14 @@ services:
             - FileObjectStoreOptions__UseSsl=${FILE_OBJECT_STORE_USE_SSL}
             - FileObjectStoreOptions__BucketName=${FILE_OBJECT_STORE_BUCKET_NAME}
             - ConnectionStrings__redis=redis:6379
+            - OllamaEmbeddingOptions__Url=http://ollama:11434
         volumes:
             - ./appData/logs:/appData/logs
 
 
     sql.database:
         container_name: webapi-app-database
-        image: postgres:17
+        image: pgvector/pgvector:pg17
         ports:
             - 5432:5432
         networks:
@@ -117,6 +121,36 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    ollama:
+        container_name: ollama
+        image: ollama/ollama:latest
+        restart: unless-stopped
+        ports:
+            - "11434:11434"
+        networks:
+            - templateapi.network
+        volumes:
+            - ollama-data:/root/.ollama
+        healthcheck:
+            test: ["CMD", "ollama", "list"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 20s
+
+    ollama-model-loader:
+        image: ollama/ollama:latest
+        restart: on-failure
+        networks:
+            - templateapi.network
+        environment:
+            - OLLAMA_HOST=http://ollama:11434
+        entrypoint: ["/bin/sh", "-c"]
+        command: ["until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull embeddinggemma"]
+        depends_on:
+            ollama:
+                condition: service_healthy
 
     grafana:
         container_name: grafana

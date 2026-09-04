@@ -58,7 +58,7 @@ app.UseHttpsRedirection();
 app.MapEndpoints();
 if (app.Environment.IsDevelopment())
 {
-    app.ApplyMigrations();
+    await app.ApplyMigrationsAsync();
 }
 
 #endregion

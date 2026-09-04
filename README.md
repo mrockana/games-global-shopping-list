@@ -6,7 +6,8 @@ A WebAPI that allows a user to login and maintain a shopping list.
 1. **gamesglobal.shoppinglist.webapi**
    - This container runs our web api GamesGlobal.ShoppingList.WebAPI. It is exposed on ports 8000 (https) and 8001 (http) and exports its telemetry to the OpenTelemetry collector.
 2. **sql.database**
-   - PostgreSQL 17 (`postgres:17`) that our application uses to persist data. It listens on port 5432 and stores its data in the `postgres-data` Docker named volume.
+   - PostgreSQL 17 with the `pgvector` extension (`pgvector/pgvector:pg17`) that our application uses to persist data and to run vector searches.
+3. **pgAdmin**
    - pgAdmin 4 web client for browsing and querying the PostgreSQL database. Its UI is available on port 5050 (`http://localhost:5050`), it logs in with `PGADMIN_DEFAULT_EMAIL` / `PGADMIN_DEFAULT_PASSWORD` and keeps its settings in the `pgadmin-data` named volume. From inside the stack connect to host `webapi-app-database` on port 5432.
 4. **otel-collector**
    - OpenTelemetry Collector that receives logs, traces and metrics from the web api over OTLP (ports 4317/4318). It then fans that telemetry out to Jaeger, Prometheus and Loki.
@@ -22,7 +23,11 @@ A WebAPI that allows a user to login and maintain a shopping list.
    - S3 compatible object storage used to store uploaded files such as shopping item images. The S3 API is exposed on port 9000 and the web console on port 9001 (`http://localhost:9001`), signing in with `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`. Its objects are kept in the `minio-data` named volume and from inside the stack it is reachable at `http://minio:9000`.
 10. **redis**
    - Redis 7 (`redis:7-alpine`) used as the distributed cache for the web api. It listens on port 6379, persists to the `redis-data` named volume and from inside the stack it is reachable at `redis:6379` (see the `ConnectionStrings__redis` environment variable).
-11. **grafana**
+11. **ollama**
+   - Ollama service used to generate embeddings for semantic search. It is available on port 11434 and persists models in the `ollama-data` named volume.
+12. **ollama-model-loader**
+   - Initialization service that waits for Ollama and pulls the `embeddinggemma` model.
+13. **grafana**
    - Dashboarding and visualisation tool served on port 3000.
 
 > These observability containers are intended for local development only; a hosted observability solution should be used for production.
@@ -65,8 +70,30 @@ See below, to start running and testing the solution.
 10. Run the following [EF Core Migration commands](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
     - ApplicationModule `dotnet ef database update --project .\GamesGlobal.ShoppingList.Infrastructure\GamesGlobal.ShoppingList.Infrastructure.csproj --startup-project .\GamesGlobal.ShoppingList.WebApi\GamesGlobal.ShoppingList.WebApi.csproj --context ApplicationDbContext`
 11. Check the database and make sure you can see the newly created tables with seeded data. The application tables live in the `public` schema and the identity tables in the `identity` schema.
-14. You can now Build, run and test the solution.
-        
+12. You can now Build, run and test the solution.
+
+## Seeding `ShoppingItems` Embeddings with `EnableEmbeddingMigrationsTestOnly`
+
+The `ShoppingItems` table has an `Embeddings` column of type `vector(768)` (pgvector) that powers the vector search. EF Core migrations only create the column - they cannot populate it, because the embedding values have to be generated at runtime by calling the Ollama embedding model.
+
+To bridge that gap the `OllamaEmbeddingOptions` section exposes a `EnableEmbeddingMigrationsTestOnly` switch:
+
+How it works:
+
+1. On startup `ApplyMigrationsAsync` applies any pending `ApplicationDbContext` and `IdentityDbContext` migrations.
+2. When `EnableEmbeddingMigrationsTestOnly` is `true`, it then runs `PostMigrationEmbeddingsSeeding`, which:
+   - Loads the seed items from the embedded `SeedData/ShoppingItems.json` resource.
+   - Inserts any seed item that does not yet exist in the `ShoppingItems` table.
+   - Collects every item whose `Embeddings` value is still `null` (both newly inserted and pre-existing rows).
+   - Calls `IEmbeddingService.GenerateAsync` (the Ollama service) with `"{Name} {Description}"` for each of those items and stores the returned vectors.
+   - Saves the changes, so subsequent startups find nothing to backfill and exit early.
+
+Usage notes:
+
+- Set it to `true` locally (for example in `appsettings.Development.json` or user secrets) the first time you set up the database, or after adding new seed items, so the vector search has data to match against.
+- The Ollama endpoint in `Url` must be reachable and the `Model` must be pulled, otherwise the seeding call fails and the error is logged by the `DataPersistenceMigration` logger.
+- As the `TestOnly` suffix implies, this is a local development / testing convenience. Leave it `false` (the committed default in `appsettings.json`) for any shared or production environment, where embeddings should be generated by the application flow rather than at startup.
+
 
 # Testing with `.http` Files
 

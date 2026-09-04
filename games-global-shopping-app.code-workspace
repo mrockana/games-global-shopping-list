@@ -11,10 +11,14 @@
 			"Meziantou",
 			"minioadmin",
 			"Npgsql",
+			"Ollama",
 			"PGADMIN",
+			"Pgvector",
+			"Postgre",
 			"postgres",
 			"Seri",
 			"Serilog",
+			"xunit",
 			"Youtube"
 		],
 		"chat.tools.terminal.autoApprove": {
