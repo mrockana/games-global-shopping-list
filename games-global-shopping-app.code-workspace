@@ -12,9 +12,11 @@
 			"minioadmin",
 			"Npgsql",
 			"PGADMIN",
+			"Postgre",
 			"postgres",
 			"Seri",
 			"Serilog",
+			"xunit",
 			"Youtube"
 		],
 		"chat.tools.terminal.autoApprove": {

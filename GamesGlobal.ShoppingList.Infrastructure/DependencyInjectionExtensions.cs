@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
@@ -101,8 +102,15 @@ public static class DependencyInjectionExtensions
 
         try
         {
-            applicationContext.Database.Migrate();
-            identityContext.Database.Migrate();
+            if (applicationContext.Database.GetPendingMigrations().Any())
+            {
+                applicationContext.Database.Migrate();
+            }
+
+            if (identityContext.Database.GetPendingMigrations().Any())
+            {
+                identityContext.Database.Migrate();
+            }
         }
         catch (Exception ex)
         {

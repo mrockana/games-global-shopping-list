@@ -7,6 +7,7 @@ volumes:
     pgadmin-data:
     minio-data:
     redis-data:
+    ollama-data:
 
 services:
     gamesglobal.shoppinglist.webapi:
@@ -117,6 +118,30 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    ollama:
+        container_name: ollama
+        image: ollama/ollama:latest
+        restart: unless-stopped
+        ports:
+            - "11434:11434"
+        networks:
+            - templateapi.network
+        volumes:
+            - ollama-data:/root/.ollama
+
+    ollama-model-loader:
+        image: ollama/ollama:latest
+        restart: on-failure
+        networks:
+            - templateapi.network
+        environment:
+            - OLLAMA_HOST=http://ollama:11434
+        command: >
+            sh -c 'until ollama list >/dev/null 2>&1; do sleep 2; done;
+            ollama pull hf.co/ggml-org/embeddinggemma-300M-GGUF'
+        depends_on:
+            - ollama
 
     grafana:
         container_name: grafana
