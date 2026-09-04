@@ -22,9 +22,10 @@ internal static class ApplicationDbContextDataSeed
         CancellationToken cancellationToken = default)
     {
         List<ShoppingItem> seedingShoppingItems = LoadShoppingItems().ToList();
+        var seedingShoppingItemIds = seedingShoppingItems.Select(si => si.ShoppingItemId);
 
         Dictionary<long, ShoppingItem> existingItems = await context.ShoppingItems
-            .Where(item => seedingShoppingItems.Select(si => si.ShoppingItemId).Contains(item.ShoppingItemId))
+            .Where(item => seedingShoppingItemIds.Contains(item.ShoppingItemId))
             .ToDictionaryAsync(item => item.ShoppingItemId, cancellationToken);
         List<ShoppingItem> itemsNeedingEmbeddings = existingItems.Values
             .Where(item => item.Embeddings is null)
