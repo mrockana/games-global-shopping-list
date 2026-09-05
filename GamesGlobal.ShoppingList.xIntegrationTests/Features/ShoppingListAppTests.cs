@@ -1,4 +1,6 @@
-﻿using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.GetShoppingItems;
 using GamesGlobal.ShoppingList.Application.Features.SearchShoppingItems;
@@ -7,8 +9,6 @@ using GamesGlobal.ShoppingList.Application.Features.UploadShoppingItemImage;
 using GamesGlobal.ShoppingList.Application.Identity.Features.Login;
 using Microsoft.EntityFrameworkCore;
 using Minio.DataModel.Args;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests.Features;
 

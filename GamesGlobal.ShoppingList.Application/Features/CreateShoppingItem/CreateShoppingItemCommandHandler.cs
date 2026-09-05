@@ -1,4 +1,9 @@
-﻿using GamesGlobal.ShoppingList.Application.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using GamesGlobal.ShoppingList.Application.Common;
 using GamesGlobal.ShoppingList.Application.Common.Cache;
 using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
@@ -9,11 +14,6 @@ using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.Entities;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.Features.Users;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 namespace GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 
 public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandler<CreateShoppingItemCommandRequest, CreateShoppingItemResponse>
