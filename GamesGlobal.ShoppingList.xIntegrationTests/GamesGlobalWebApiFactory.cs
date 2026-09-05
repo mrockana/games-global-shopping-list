@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Minio;
 using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests;
 
@@ -27,9 +28,14 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
        .WithPassword(MinioSecretKey)
        .Build();
 
+    private readonly RedisContainer _redis = new RedisBuilder("redis:7-alpine")
+        .Build();
+
     private IServiceScope? _serviceScope;
 
     public string PostgresConnectionString => _postgres.GetConnectionString();
+
+    public string RedisConnectionString => _redis.GetConnectionString();
 
     public string FileObjectStoreUrl => string.Create(
         CultureInfo.InvariantCulture,
@@ -76,6 +82,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
 
     public async Task InitializeAsync()
     {
+        await _redis.StartAsync();
         await _postgres.StartAsync();
         await _minio.StartAsync();
     }
@@ -86,6 +93,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
         await base.DisposeAsync();
         await _minio.DisposeAsync();
         await _postgres.DisposeAsync();
+        await _redis.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -94,6 +102,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
         {
             configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>(StringComparer.Ordinal)
             {
+                ["ConnectionStrings:redis"] = RedisConnectionString,
                 ["ConnectionStrings:postgres"] = PostgresConnectionString,
                 ["FileObjectStoreOptions:Url"] = FileObjectStoreUrl,
                 ["FileObjectStoreOptions:User"] = MinioAccessKey,
