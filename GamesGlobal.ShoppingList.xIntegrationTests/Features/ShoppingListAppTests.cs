@@ -1,13 +1,14 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
+﻿using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.GetShoppingItems;
+using GamesGlobal.ShoppingList.Application.Features.SearchShoppingItems;
 using GamesGlobal.ShoppingList.Application.Features.UpdateShoppingItemCommand;
 using GamesGlobal.ShoppingList.Application.Features.UploadShoppingItemImage;
 using GamesGlobal.ShoppingList.Application.Identity.Features.Login;
 using Microsoft.EntityFrameworkCore;
 using Minio.DataModel.Args;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests.Features;
 
@@ -65,6 +66,28 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         Assert.Contains(shoppingItems, item =>
             string.Equals(item.Name, itemName, StringComparison.Ordinal)
             && string.Equals(item.Description, "Integration-test item", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SearchShoppingItems_WithHydratedEmbeddings_ReturnsScoredResults()
+    {
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+
+        var result = await _apiClient.GetAsync("/shopping-items/search?search=apple");
+        result.EnsureSuccessStatusCode();
+
+        var shoppingItems = await result.Content.ReadFromJsonAsync<IList<SearchShoppingItemsResponse>>();
+
+        Assert.NotNull(shoppingItems);
+        Assert.NotEmpty(shoppingItems);
+        Assert.All(shoppingItems, shoppingItem =>
+        {
+            Assert.True(shoppingItem.Distance >= 0D);
+            Assert.InRange(shoppingItem.Confidence, 0D, 1D);
+        });
+        Assert.Contains(shoppingItems, shoppingItem => string.Equals(shoppingItem.Name, "Apple", StringComparison.Ordinal));
+        Assert.True(await _factory.ApplicationDbContext.ShoppingItems.AnyAsync(shoppingItem => shoppingItem.Embeddings != null));
     }
 
     [Fact]

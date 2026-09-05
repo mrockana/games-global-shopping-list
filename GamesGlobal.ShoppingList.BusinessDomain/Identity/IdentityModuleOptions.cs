@@ -11,8 +11,4 @@ public sealed class IdentityModuleOptions
     public required string HashedTokenSigningKey { get; set; }
 
     public required int RefreshTokenExpiresInMinutes { get; set; }
-
-    public required int ForgotPasswordRequestExpiresInMinutes { get; set; }
-
-    public required int ForgotPasswordRequestCodeLength { get; set; }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using GamesGlobal.ShoppingList.Application.Common;
+﻿using GamesGlobal.ShoppingList.Application.Common;
 using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DomainException;
@@ -13,6 +9,11 @@ using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.Entities;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.Features.Users;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 namespace GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 
 public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandler<CreateShoppingItemCommandRequest, CreateShoppingItemResponse>
@@ -23,17 +24,21 @@ public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandle
     private readonly ActivitySource _activitySource;
     private readonly ICacheService _cacheService;
 
+    private readonly IEmbeddingService _embeddingService;
+
     public CreateShoppingItemCommandHandler(
         IApplicationRepository repository,
         ILogger<CreateShoppingItemCommandHandler> logger,
         IIdentityRepository identityRepository,
-        ICacheService cacheService)
+        ICacheService cacheService,
+        IEmbeddingService embeddingService)
     {
         _repository = repository;
         _logger = logger;
         _activitySource = DiagnosticConfig.ActivitySource;
         _identityRepository = identityRepository;
         _cacheService = cacheService;
+        _embeddingService = embeddingService;
     }
 
     public async Task<Result<CreateShoppingItemResponse>> Handle(CreateShoppingItemCommandRequest request, CancellationToken cancellationToken = default)
@@ -52,7 +57,12 @@ public sealed class CreateShoppingItemCommandHandler : IApplicationRequestHandle
             new (nameof(request.UserCode), request.UserCode),
         });
 
-        var itemToInsert = request.ToEntity();
+        var textToEmbed = new List<string> { $"{request.Name} {request.Description}" };
+        IReadOnlyList<Pgvector.Vector> embeddings = await _embeddingService.GenerateAsync(
+            textToEmbed,
+            cancellationToken);
+
+        var itemToInsert = request.ToEntity(embeddings[0]);
         itemToInsert.UserCode = user.UserCode;
 
         ShoppingItem? domainModelResult = _repository.Insert(itemToInsert);
@@ -78,7 +88,7 @@ public sealed record CreateShoppingItemCommandRequest(Guid UserCode, string Name
 
 public static class CreateShoppingItemCommandRequestExtensions
 {
-    public static ShoppingItem ToEntity(this CreateShoppingItemCommandRequest request)
+    public static ShoppingItem ToEntity(this CreateShoppingItemCommandRequest request, Pgvector.Vector embeddings)
     {
         return new ShoppingItem
         {

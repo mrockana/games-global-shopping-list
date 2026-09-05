@@ -26,8 +26,6 @@ internal static class IdentityFixtures
         JwtExpiresInMinutes = 60,
         RefreshTokenExpiresInMinutes = 120,
         ApplicationUrl = "http://localhost",
-        ForgotPasswordRequestCodeLength = 6,
-        ForgotPasswordRequestExpiresInMinutes = 15,
         HashedTokenSigningKey = Guid.NewGuid().ToString(),
         JwtSigningKey = Guid.NewGuid().ToString(),
     });
