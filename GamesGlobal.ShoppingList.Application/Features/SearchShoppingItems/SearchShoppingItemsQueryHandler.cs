@@ -43,21 +43,27 @@ public sealed class SearchShoppingItemsQueryHandler : IApplicationRequestHandler
 
         var shoppingItems = await _applicationDbContext.ShoppingItems
             .AsNoTracking()
-            .Where(shoppingItem => shoppingItem.UserCode == request.UserCode && shoppingItem.Embeddings != null)
+            .Where(shoppingItem => shoppingItem.UserCode == request.UserCode)
             .Select(shoppingItem => new
             {
                 ShoppingItem = shoppingItem,
-                Distance = shoppingItem.Embeddings!.L2Distance(embeddings[0]),
+                IsFullTextMatch = EF.Functions
+                    .ToTsVector("english", shoppingItem.Name + " " + shoppingItem.Description)
+                    .Matches(EF.Functions.WebSearchToTsQuery("english", request.Search)),
+                Distance = shoppingItem.Embeddings == null
+                    ? 0D
+                    : shoppingItem.Embeddings.L2Distance(embeddings[0]),
             })
-            .Where(result => 1D / (1D + result.Distance) >= MinimumConfidence)
-            .OrderBy(result => result.Distance)
+            .Where(result => result.IsFullTextMatch || (result.ShoppingItem.Embeddings != null && 1D / (1D + result.Distance) >= MinimumConfidence))
+            .OrderByDescending(result => result.IsFullTextMatch)
+            .ThenBy(result => result.Distance)
             .Select(result => new SearchShoppingItemsResponse(
                 result.ShoppingItem.ShoppingItemId,
                 result.ShoppingItem.UserCode,
                 result.ShoppingItem.Name!,
                 result.ShoppingItem.Description,
                 result.Distance,
-                1D / (1D + result.Distance),
+                result.IsFullTextMatch ? 1D : 1D / (1D + result.Distance),
                 result.ShoppingItem.Documents
                     .Select(document => new SearchShoppingItemsDocumentResponse(document.DocumentId, document.MimeType, document.Url, document.Name, document.Size))
                     .ToList()))
