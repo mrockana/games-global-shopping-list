@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
-using Microsoft.AspNetCore.Builder;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -101,6 +101,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
         {
             await _ollama.DisposeAsync();
         }
+
         await _minio.DisposeAsync();
         await _postgres.DisposeAsync();
         await _redis.DisposeAsync();
@@ -147,7 +148,7 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
                 embeddings = request.Input.Select(_ => new float[EmbeddingDimensions]).ToArray(),
             }));
 
-            await application.StartAsync();
+            await application.StartAsync(application.Lifetime.ApplicationStarted);
             return new FakeOllamaServer(application);
         }
 
