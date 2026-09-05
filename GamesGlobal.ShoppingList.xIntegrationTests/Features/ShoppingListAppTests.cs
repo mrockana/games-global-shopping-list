@@ -74,7 +74,7 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         var loginResponse = await GetLoginResponseAsync();
         _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
 
-        var result = await _apiClient.GetAsync("/shopping-items/search?search=apple");
+        var result = await _apiClient.GetAsync("/shopping-items/search?search=Lipstick");
         result.EnsureSuccessStatusCode();
 
         var shoppingItems = await result.Content.ReadFromJsonAsync<IList<SearchShoppingItemsResponse>>();
@@ -86,8 +86,33 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
             Assert.True(shoppingItem.Distance >= 0D);
             Assert.InRange(shoppingItem.Confidence, 0D, 1D);
         });
-        Assert.Contains(shoppingItems, shoppingItem => string.Equals(shoppingItem.Name, "Apple", StringComparison.Ordinal));
+        Assert.Contains(shoppingItems, shoppingItem => shoppingItem.Name.Contains("Lipstick", StringComparison.Ordinal));
         Assert.True(await _factory.ApplicationDbContext.ShoppingItems.AnyAsync(shoppingItem => shoppingItem.Embeddings != null));
+    }
+
+    [Fact]
+    public async Task SearchShoppingItems_WithFullTextMatch_ReturnsExactMatch()
+    {
+        var loginResponse = await GetLoginResponseAsync();
+        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+        var itemName = $"fulltext-{Guid.NewGuid():N}";
+
+        var createResult = await _apiClient.PostAsJsonAsync("/create-shopping-item", new
+        {
+            Name = itemName,
+            Description = "Created specifically for full text search.",
+        });
+        createResult.EnsureSuccessStatusCode();
+
+        var result = await _apiClient.GetAsync($"/shopping-items/search?search={itemName}");
+        result.EnsureSuccessStatusCode();
+
+        var shoppingItems = await result.Content.ReadFromJsonAsync<IList<SearchShoppingItemsResponse>>();
+
+        Assert.NotNull(shoppingItems);
+        var shoppingItem = Assert.Single(shoppingItems, shoppingItem => string.Equals(shoppingItem.Name, itemName, StringComparison.Ordinal));
+        Assert.Equal(0D, shoppingItem.Distance);
+        Assert.Equal(1D, shoppingItem.Confidence);
     }
 
     [Fact]
