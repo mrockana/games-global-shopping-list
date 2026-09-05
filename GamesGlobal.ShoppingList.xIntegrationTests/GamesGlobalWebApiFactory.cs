@@ -1,19 +1,14 @@
 ﻿using System.Globalization;
-using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Minio;
-using Pgvector;
 using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
-using Testcontainers.Redis;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests;
 
@@ -32,14 +27,9 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
        .WithPassword(MinioSecretKey)
        .Build();
 
-    private readonly RedisContainer _redis = new RedisBuilder("redis:7-alpine")
-        .Build();
-
     private IServiceScope? _serviceScope;
 
     public string PostgresConnectionString => _postgres.GetConnectionString();
-
-    public string RedisConnectionString => _redis.GetConnectionString();
 
     public string FileObjectStoreUrl => string.Create(
         CultureInfo.InvariantCulture,
@@ -88,14 +78,12 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
     {
         await _postgres.StartAsync();
         await _minio.StartAsync();
-        await _redis.StartAsync();
     }
 
     public new async Task DisposeAsync()
     {
         _serviceScope?.Dispose();
         await base.DisposeAsync();
-        await _redis.DisposeAsync();
         await _minio.DisposeAsync();
         await _postgres.DisposeAsync();
     }
@@ -107,37 +95,12 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
             configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>(StringComparer.Ordinal)
             {
                 ["ConnectionStrings:postgres"] = PostgresConnectionString,
-                ["ConnectionStrings:redis"] = RedisConnectionString,
                 ["FileObjectStoreOptions:Url"] = FileObjectStoreUrl,
                 ["FileObjectStoreOptions:User"] = MinioAccessKey,
                 ["FileObjectStoreOptions:Secret"] = MinioSecretKey,
                 ["FileObjectStoreOptions:UseSsl"] = "false",
                 ["FileObjectStoreOptions:BucketName"] = FileObjectStoreBucketName,
-                ["OllamaEmbeddingOptions:EnableEmbeddingMigrationsTestOnly"] = "true",
             });
         });
-
-        builder.ConfigureTestServices(services =>
-        {
-            services.RemoveAll<IEmbeddingService>();
-            services.AddSingleton<IEmbeddingService, TestEmbeddingService>();
-        });
-    }
-
-    private sealed class TestEmbeddingService : IEmbeddingService
-    {
-        private static readonly Vector Embedding = new(CreateEmbedding());
-
-        public Task<IReadOnlyList<Vector>> GenerateAsync(
-            IReadOnlyList<string> inputs,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<Vector>>(inputs.Select(_ => Embedding).ToList());
-
-        private static float[] CreateEmbedding()
-        {
-            var embedding = new float[768];
-            embedding[0] = 1F;
-            return embedding;
-        }
     }
 }

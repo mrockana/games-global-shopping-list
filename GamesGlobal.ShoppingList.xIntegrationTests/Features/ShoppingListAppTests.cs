@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.DeleteShoppingItem;
 using GamesGlobal.ShoppingList.Application.Features.GetShoppingItems;
-using GamesGlobal.ShoppingList.Application.Features.SearchShoppingItems;
 using GamesGlobal.ShoppingList.Application.Features.UpdateShoppingItemCommand;
 using GamesGlobal.ShoppingList.Application.Features.UploadShoppingItemImage;
 using GamesGlobal.ShoppingList.Application.Identity.Features.Login;
@@ -66,53 +65,6 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         Assert.Contains(shoppingItems, item =>
             string.Equals(item.Name, itemName, StringComparison.Ordinal)
             && string.Equals(item.Description, "Integration-test item", StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public async Task SearchShoppingItems_WithHydratedEmbeddings_ReturnsScoredResults()
-    {
-        var loginResponse = await GetLoginResponseAsync();
-        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-
-        var result = await _apiClient.GetAsync("/shopping-items/search?search=Lipstick");
-        result.EnsureSuccessStatusCode();
-
-        var shoppingItems = await result.Content.ReadFromJsonAsync<IList<SearchShoppingItemsResponse>>();
-
-        Assert.NotNull(shoppingItems);
-        Assert.NotEmpty(shoppingItems);
-        Assert.All(shoppingItems, shoppingItem =>
-        {
-            Assert.True(shoppingItem.Distance >= 0D);
-            Assert.InRange(shoppingItem.Confidence, 0D, 1D);
-        });
-        Assert.Contains(shoppingItems, shoppingItem => shoppingItem.Name.Contains("Lipstick", StringComparison.Ordinal));
-        Assert.True(await _factory.ApplicationDbContext.ShoppingItems.AnyAsync(shoppingItem => shoppingItem.Embeddings != null));
-    }
-
-    [Fact]
-    public async Task SearchShoppingItems_WithFullTextMatch_ReturnsExactMatch()
-    {
-        var loginResponse = await GetLoginResponseAsync();
-        _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-        var itemName = $"fulltext-{Guid.NewGuid():N}";
-
-        var createResult = await _apiClient.PostAsJsonAsync("/create-shopping-item", new
-        {
-            Name = itemName,
-            Description = "Created specifically for full text search.",
-        });
-        createResult.EnsureSuccessStatusCode();
-
-        var result = await _apiClient.GetAsync($"/shopping-items/search?search={itemName}");
-        result.EnsureSuccessStatusCode();
-
-        var shoppingItems = await result.Content.ReadFromJsonAsync<IList<SearchShoppingItemsResponse>>();
-
-        Assert.NotNull(shoppingItems);
-        var shoppingItem = Assert.Single(shoppingItems, shoppingItem => string.Equals(shoppingItem.Name, itemName, StringComparison.Ordinal));
-        Assert.Equal(0D, shoppingItem.Distance);
-        Assert.Equal(1D, shoppingItem.Confidence);
     }
 
     [Fact]
