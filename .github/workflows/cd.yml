@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Build and Deploy Container App 
 
 on:
   workflow_run:
@@ -15,8 +15,8 @@ env:
   RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
 
 jobs:
-  publish:
-    name: Publish image to Docker Hub
+  build-and-publish-to-dockerhub:
+    name: Build and publish Docker image to Docker Hub
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
@@ -57,6 +57,13 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
 
+  deploy-to-azure:
+    name: Deploy Docker image to Azure Container Apps
+    needs: build-and-publish-to-dockerhub
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
       - name: Log in to Azure
         uses: azure/login@v1
         with:
