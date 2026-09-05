@@ -16,31 +16,21 @@ internal static class ApplicationDbContextDataSeed
 {
     private const string ShoppingItemsResourceName = "GamesGlobal.ShoppingList.Infrastructure.DataAccess.Application.SeedData.ShoppingItems.json";
 
+    internal static void AddApplicationDbContextDataSeed(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ShoppingItem>().HasData(LoadShoppingItems());
+    }
+
     internal static async Task PostMigrationEmbeddingsSeeding(
         this ApplicationDbContext context,
         IEmbeddingService embeddingService,
         CancellationToken cancellationToken = default)
     {
-        List<ShoppingItem> seedingShoppingItems = LoadShoppingItems().ToList();
-        var seedingShoppingItemIds = seedingShoppingItems.Select(si => si.ShoppingItemId);
+        var ids = LoadShoppingItems().Select(p => p.ShoppingItemId);
+        List<ShoppingItem> itemsNeedingEmbeddings = await context.ShoppingItems
+            .Where(item => item.Embeddings == null && ids.Contains(item.ShoppingItemId))
 
-        Dictionary<long, ShoppingItem> existingItems = await context.ShoppingItems
-            .Where(item => seedingShoppingItemIds.Contains(item.ShoppingItemId))
-            .ToDictionaryAsync(item => item.ShoppingItemId, cancellationToken);
-        List<ShoppingItem> itemsNeedingEmbeddings = existingItems.Values
-            .Where(item => item.Embeddings is null)
-            .ToList();
-
-        foreach (ShoppingItem shoppingItem in seedingShoppingItems)
-        {
-            if (existingItems.ContainsKey(shoppingItem.ShoppingItemId))
-            {
-                continue;
-            }
-
-            context.ShoppingItems.Add(shoppingItem);
-            itemsNeedingEmbeddings.Add(shoppingItem);
-        }
+            .ToListAsync(cancellationToken);
 
         if (itemsNeedingEmbeddings.Count == 0)
         {
