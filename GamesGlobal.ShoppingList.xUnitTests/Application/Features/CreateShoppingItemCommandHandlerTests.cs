@@ -1,4 +1,5 @@
 using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.Application.Features;
 using GamesGlobal.ShoppingList.Application.Features.CreateShoppingItem;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
@@ -18,6 +19,7 @@ public sealed class CreateShoppingItemCommandHandlerTests
     private readonly IIdentityRepository _identityRepository = Substitute.For<IIdentityRepository>();
     private readonly ILogger<CreateShoppingItemCommandHandler> _logger = Substitute.For<ILogger<CreateShoppingItemCommandHandler>>();
     private readonly ICacheService _cacheService = Substitute.For<ICacheService>();
+    private readonly IEmbeddingService _embeddingService = Substitute.For<IEmbeddingService>();
 
     [Fact]
     public async Task Handle_UserDoesNotExist_ReturnsApplicationException()
@@ -93,5 +95,5 @@ public sealed class CreateShoppingItemCommandHandlerTests
         Assert.Contains(result.Errors, error => error.PropertyName.Equals(nameof(CreateShoppingItemCommandRequest.UserCode), StringComparison.InvariantCulture));
     }
 
-    private CreateShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _identityRepository, _cacheService);
+    private CreateShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _identityRepository, _cacheService, _embeddingService);
 }

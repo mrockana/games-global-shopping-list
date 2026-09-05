@@ -1,4 +1,5 @@
 using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.Application.Features;
 using GamesGlobal.ShoppingList.Application.Features.UpdateShoppingItemCommand;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
@@ -16,6 +17,7 @@ public sealed class UpdateShoppingItemCommandHandlerTests
     private readonly IApplicationRepository _repository = Substitute.For<IApplicationRepository>();
     private readonly ILogger<UpdateShoppingItemCommandHandler> _logger = Substitute.For<ILogger<UpdateShoppingItemCommandHandler>>();
     private readonly ICacheService _cacheService = Substitute.For<ICacheService>();
+    private readonly IEmbeddingService _embeddingService = Substitute.For<IEmbeddingService>();
 
     [Fact]
     public async Task Handle_ItemDoesNotExist_ReturnsNotFoundException()
@@ -92,5 +94,5 @@ public sealed class UpdateShoppingItemCommandHandlerTests
         Assert.False(result.IsValid);
     }
 
-    private UpdateShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _cacheService);
+    private UpdateShoppingItemCommandHandler CreateHandler() => new(_repository, _logger, _cacheService, _embeddingService);
 }
