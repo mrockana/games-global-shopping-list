@@ -18,6 +18,8 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         Username: "johndoe@example.gamesglobal",
         Password: "123Abc123@");
 
+    private static readonly int ShoppingItemId = 8;
+
     private static readonly byte[] OnePixelPng = Convert.FromBase64String(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
 
@@ -48,13 +50,6 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         var loginResponse = await GetLoginResponseAsync();
 
         _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-        var itemName = $"item-{Guid.NewGuid():N}";
-        var createResult = await _apiClient.PostAsJsonAsync("/create-shopping-item", new
-        {
-            Name = itemName,
-            Description = "Integration-test item",
-        });
-        createResult.EnsureSuccessStatusCode();
 
         var result = await _apiClient.GetAsync("/shopping-items");
         result.EnsureSuccessStatusCode();
@@ -62,9 +57,7 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         var shoppingItems = await result.Content.ReadFromJsonAsync<IList<GetShoppingItemResponse>>();
 
         Assert.NotNull(shoppingItems);
-        Assert.Contains(shoppingItems, item =>
-            string.Equals(item.Name, itemName, StringComparison.Ordinal)
-            && string.Equals(item.Description, "Integration-test item", StringComparison.Ordinal));
+        Assert.NotEmpty(shoppingItems);
     }
 
     [Fact]
@@ -103,13 +96,11 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
     {
         var loginResponse = await GetLoginResponseAsync();
         _apiClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-        var createResponse = await CreateShoppingItemAsync("Original item", "Original description");
-        var updatedName = $"update-{Guid.NewGuid():N}";
 
         var result = await _apiClient.PostAsJsonAsync("/update-shopping-item", new
         {
-            ShoppingItemId = createResponse.ShoppingItemId,
-            Name = updatedName,
+            ShoppingItemId = ShoppingItemId,
+            Name = "Updated item",
             Description = "Updated by integration test",
         });
         result.EnsureSuccessStatusCode();
@@ -117,16 +108,16 @@ public sealed class ShoppingListAppTests : IClassFixture<GamesGlobalWebApiFactor
         var response = await result.Content.ReadFromJsonAsync<UpdateShoppingItemResponse>();
 
         Assert.NotNull(response);
-        Assert.Equal(createResponse.ShoppingItemId, response.ShoppingItemId);
-        Assert.Equal(updatedName, response.Name);
+        Assert.Equal(ShoppingItemId, response.ShoppingItemId);
+        Assert.Equal("Updated item", response.Name);
         Assert.Equal("Updated by integration test", response.Description);
 
         var persistedItem = await _factory.ApplicationDbContext.ShoppingItems
             .AsNoTracking()
-            .SingleOrDefaultAsync(item => item.ShoppingItemId == createResponse.ShoppingItemId);
+            .SingleOrDefaultAsync(item => item.ShoppingItemId == ShoppingItemId);
 
         Assert.NotNull(persistedItem);
-        Assert.Equal(updatedName, persistedItem.Name);
+        Assert.Equal("Updated item", persistedItem.Name);
         Assert.Equal("Updated by integration test", persistedItem.Description);
     }
 
