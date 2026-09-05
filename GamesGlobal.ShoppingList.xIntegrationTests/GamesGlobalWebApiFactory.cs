@@ -35,7 +35,9 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
 
     private readonly IContainer _ollama = new ContainerBuilder("ollama/ollama:latest")
         .WithPortBinding(11434, true)
-        .WithWaitStrategy(Wait.ForUnixContainer().UntilExternalTcpPortIsAvailable(11434))
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request
+            .ForPort(11434)
+            .ForPath("/api/tags")))
         .Build();
 
     private IServiceScope? _serviceScope;
