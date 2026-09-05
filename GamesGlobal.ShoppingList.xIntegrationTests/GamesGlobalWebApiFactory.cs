@@ -1,14 +1,16 @@
 ﻿using System.Globalization;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
+using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Minio;
+using Pgvector;
 using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
@@ -33,13 +35,6 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
     private readonly RedisContainer _redis = new RedisBuilder("redis:7-alpine")
         .Build();
 
-    private readonly IContainer _ollama = new ContainerBuilder("ollama/ollama:latest")
-        .WithPortBinding(11434, true)
-        .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request
-            .ForPort(11434)
-            .ForPath("/api/tags")))
-        .Build();
-
     private IServiceScope? _serviceScope;
 
     public string PostgresConnectionString => _postgres.GetConnectionString();
@@ -49,10 +44,6 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
     public string FileObjectStoreUrl => string.Create(
         CultureInfo.InvariantCulture,
         $"http://{_minio.Hostname}:{_minio.GetMappedPublicPort(MinioBuilder.MinioPort)}");
-
-    public string OllamaUrl => string.Create(
-        CultureInfo.InvariantCulture,
-        $"http://{_ollama.Hostname}:{_ollama.GetMappedPublicPort(11434)}");
 
     public IMinioClient MinioClient
     {
@@ -98,20 +89,12 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
         await _postgres.StartAsync();
         await _minio.StartAsync();
         await _redis.StartAsync();
-        await _ollama.StartAsync();
-
-        ExecResult pullModelResult = await _ollama.ExecAsync(["ollama", "pull", "embeddinggemma"]);
-        if (pullModelResult.ExitCode != 0)
-        {
-            throw new InvalidOperationException($"Unable to pull the embeddinggemma model: {pullModelResult.Stderr}");
-        }
     }
 
     public new async Task DisposeAsync()
     {
         _serviceScope?.Dispose();
         await base.DisposeAsync();
-        await _ollama.DisposeAsync();
         await _redis.DisposeAsync();
         await _minio.DisposeAsync();
         await _postgres.DisposeAsync();
@@ -130,9 +113,31 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
                 ["FileObjectStoreOptions:Secret"] = MinioSecretKey,
                 ["FileObjectStoreOptions:UseSsl"] = "false",
                 ["FileObjectStoreOptions:BucketName"] = FileObjectStoreBucketName,
-                ["OllamaEmbeddingOptions:Url"] = OllamaUrl,
                 ["OllamaEmbeddingOptions:EnableEmbeddingMigrationsTestOnly"] = "true",
             });
         });
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<IEmbeddingService>();
+            services.AddSingleton<IEmbeddingService, TestEmbeddingService>();
+        });
+    }
+
+    private sealed class TestEmbeddingService : IEmbeddingService
+    {
+        private static readonly Vector Embedding = new(CreateEmbedding());
+
+        public Task<IReadOnlyList<Vector>> GenerateAsync(
+            IReadOnlyList<string> inputs,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<Vector>>(inputs.Select(_ => Embedding).ToList());
+
+        private static float[] CreateEmbedding()
+        {
+            var embedding = new float[768];
+            embedding[0] = 1F;
+            return embedding;
+        }
     }
 }

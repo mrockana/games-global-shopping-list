@@ -94,6 +94,7 @@ public static class CreateShoppingItemCommandRequestExtensions
         {
             Name = request.Name,
             Description = request.Description,
+            Embeddings = embeddings,
         };
     }
 }
