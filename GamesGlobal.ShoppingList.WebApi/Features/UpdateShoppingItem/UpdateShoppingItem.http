@@ -6,7 +6,7 @@ Content-Type: application/json
 Accept: */*
 
 {
-  "shoppingItemId": 9,
+  "shoppingItemId": 98,
   "name": "Choc Brownie",
-  "Description": "Chocolate delight"
+  "Description": "Swiss Chocolate delight"
 }

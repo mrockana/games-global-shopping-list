@@ -2,13 +2,16 @@
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess;
 using GamesGlobal.ShoppingList.BusinessDomain.Identity.DataAccess;
 using GamesGlobal.ShoppingList.WebApi.Common.Endpoints;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio;
 using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 
 namespace GamesGlobal.ShoppingList.xIntegrationTests;
 
@@ -27,13 +30,21 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
        .WithPassword(MinioSecretKey)
        .Build();
 
+    private readonly RedisContainer _redis = new RedisBuilder("redis:7-alpine")
+        .Build();
+
+    private FakeOllamaServer? _ollama;
     private IServiceScope? _serviceScope;
 
     public string PostgresConnectionString => _postgres.GetConnectionString();
 
+    public string RedisConnectionString => _redis.GetConnectionString();
+
     public string FileObjectStoreUrl => string.Create(
         CultureInfo.InvariantCulture,
         $"http://{_minio.Hostname}:{_minio.GetMappedPublicPort(MinioBuilder.MinioPort)}");
+
+    public string OllamaUrl => _ollama?.Url ?? throw new InvalidOperationException("The fake Ollama server has not started.");
 
     public IMinioClient MinioClient
     {
@@ -76,6 +87,8 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
 
     public async Task InitializeAsync()
     {
+        _ollama = await FakeOllamaServer.StartAsync();
+        await _redis.StartAsync();
         await _postgres.StartAsync();
         await _minio.StartAsync();
     }
@@ -84,8 +97,14 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
     {
         _serviceScope?.Dispose();
         await base.DisposeAsync();
+        if (_ollama is not null)
+        {
+            await _ollama.DisposeAsync();
+        }
+
         await _minio.DisposeAsync();
         await _postgres.DisposeAsync();
+        await _redis.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -94,7 +113,9 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
         {
             configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>(StringComparer.Ordinal)
             {
+                ["ConnectionStrings:redis"] = RedisConnectionString,
                 ["ConnectionStrings:postgres"] = PostgresConnectionString,
+                ["OllamaEmbeddingOptions:Url"] = OllamaUrl,
                 ["FileObjectStoreOptions:Url"] = FileObjectStoreUrl,
                 ["FileObjectStoreOptions:User"] = MinioAccessKey,
                 ["FileObjectStoreOptions:Secret"] = MinioSecretKey,
@@ -102,5 +123,37 @@ public sealed class GamesGlobalWebApiFactory : WebApplicationFactory<IEndpoint>,
                 ["FileObjectStoreOptions:BucketName"] = FileObjectStoreBucketName,
             });
         });
+    }
+
+    private sealed class FakeOllamaServer : IAsyncDisposable
+    {
+        private const int EmbeddingDimensions = 768;
+        private readonly WebApplication _application;
+
+        private FakeOllamaServer(WebApplication application)
+        {
+            _application = application;
+        }
+
+        public string Url => _application.Urls.Single();
+
+        public static async Task<FakeOllamaServer> StartAsync()
+        {
+            WebApplicationBuilder builder = WebApplication.CreateSlimBuilder();
+            builder.WebHost.UseUrls("http://127.0.0.1:0");
+            WebApplication application = builder.Build();
+
+            application.MapPost("/api/embed", (EmbedRequest request) => Results.Ok(new
+            {
+                embeddings = request.Input.Select(_ => new float[EmbeddingDimensions]).ToArray(),
+            }));
+
+            await application.StartAsync(application.Lifetime.ApplicationStarted);
+            return new FakeOllamaServer(application);
+        }
+
+        public ValueTask DisposeAsync() => _application.DisposeAsync();
+
+        private sealed record EmbedRequest(IReadOnlyList<string> Input);
     }
 }

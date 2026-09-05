@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GamesGlobal.ShoppingList.Application.Common;
 using GamesGlobal.ShoppingList.Application.Common.Cache;
+using GamesGlobal.ShoppingList.Application.Common.Embeddings;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DataAccess.Repository;
 using GamesGlobal.ShoppingList.BusinessDomain.Common.DomainException;
@@ -21,15 +22,19 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
     private readonly ActivitySource _activitySource;
     private readonly ICacheService _cacheService;
 
+    private readonly IEmbeddingService _embeddingService;
+
     public UpdateShoppingItemCommandHandler(
         IApplicationRepository repository,
         ILogger<UpdateShoppingItemCommandHandler> logger,
-        ICacheService cacheService)
+        ICacheService cacheService,
+        IEmbeddingService embeddingService)
     {
         _repository = repository;
         _logger = logger;
         _activitySource = DiagnosticConfig.ActivitySource;
         _cacheService = cacheService;
+        _embeddingService = embeddingService;
     }
 
     public async Task<Result<UpdateShoppingItemResponse>> Handle(UpdateShoppingItemCommandRequest request, CancellationToken cancellationToken = default)
@@ -57,8 +62,14 @@ public sealed class UpdateShoppingItemCommandHandler : IApplicationRequestHandle
             return Result.CreateErrorResult<UpdateShoppingItemResponse>(new DomainForbiddenActionException("You are not allowed to update this shopping item."));
         }
 
+        var textToEmbed = new List<string> { $"{request.Name} {request.Description}" };
+        IReadOnlyList<Pgvector.Vector> embeddings = await _embeddingService.GenerateAsync(
+            textToEmbed,
+            cancellationToken);
+
         shoppingItem!.Description = request.Description;
-        shoppingItem!.Name = request.Name;
+        shoppingItem.Name = request.Name;
+        shoppingItem.Embeddings = embeddings[0];
 
         int saveResult = await _repository.SaveAsync(cancellationToken);
 
