@@ -36,6 +36,7 @@ services:
             ollama-model-loader:
                 condition: service_completed_successfully
         environment:
+            - ASPNETCORE_ENVIRONMENT=Development
             - OtelExport__Endpoint=http://otel-collector:4317
             - ConnectionStrings__postgres=Host=webapi-app-database;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};
             - IdentityModuleOptions__JwtSigningKey=${IDENTITY_JWT_SIGNING_KEY}
