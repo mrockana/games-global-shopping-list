@@ -19,10 +19,10 @@ internal sealed class SearchShoppingItemsEndpoint : IEndpoint
     {
         app.MapGet("/shopping-items/search",
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Permissions = Permissions.ShoppingItemsSelfReadWrite | Permissions.ShoppingItemsSelfReadOnly)]
-        async ([FromQuery] string search, [FromServices] ApplicationRequestProcessor requestProcessor, HttpContext context) =>
+        async ([FromQuery] string searchText, [FromServices] ApplicationRequestProcessor requestProcessor, HttpContext context) =>
         {
             System.Security.Claims.ClaimsPrincipal? user = context.User;
-            var request = new SearchShoppingItemsQuery(user!.GetUserCode(), search);
+            var request = new SearchShoppingItemsQuery(user!.GetUserCode(), searchText);
             var result = await requestProcessor.Process<SearchShoppingItemsQuery, IList<SearchShoppingItemsResponse>>(request, context.RequestAborted);
             return result;
         })

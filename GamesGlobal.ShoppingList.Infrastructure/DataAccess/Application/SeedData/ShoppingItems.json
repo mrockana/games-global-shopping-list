@@ -1,233 +1,233 @@
 ﻿[
-    {
-        "ShoppingItemId":  5,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Essence Mascara Lash Princess",
-        "Description":  "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  6,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Eyeshadow Palette with Mirror",
-        "Description":  "The Eyeshadow Palette with Mirror offers a versatile range of eyeshadow shades for creating stunning eye looks. With a built-in mirror, it is convenient for on-the-go makeup application.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  7,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Powder Canister",
-        "Description":  "The Powder Canister is a finely milled setting powder designed to set makeup and control shine. With a lightweight and translucent formula, it provides a smooth and matte finish.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  8,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Red Lipstick",
-        "Description":  "The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and pigmented formula, it provides a vibrant and long-lasting finish.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  9,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Red Nail Polish",
-        "Description":  "The Red Nail Polish offers a rich and glossy red hue for vibrant and polished nails. With a quick-drying formula, it provides a salon-quality finish at home.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  10,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Calvin Klein CK One",
-        "Description":  "CK One by Calvin Klein is a classic unisex fragrance, known for its fresh and clean scent. It is a versatile fragrance suitable for everyday wear.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  11,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Chanel Coco Noir Eau De",
-        "Description":  "Coco Noir by Chanel is an elegant and mysterious fragrance, featuring notes of grapefruit, rose, and sandalwood. Perfect for evening occasions.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  12,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Dior J\u0027adore",
-        "Description":  "J\u0027adore by Dior is a luxurious and floral fragrance, known for its blend of ylang-ylang, rose, and jasmine. It embodies femininity and sophistication.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  13,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Dolce Shine Eau de",
-        "Description":  "Dolce Shine by Dolce and Gabbana is a vibrant and fruity fragrance, featuring notes of mango, jasmine, and blonde woods. It is a joyful and youthful scent.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  14,
-        "UserCode":  "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
-        "Name":  "Gucci Bloom Eau de",
-        "Description":  "Gucci Bloom by Gucci is a floral and captivating fragrance, with notes of tuberose, jasmine, and Rangoon creeper. It is a modern and romantic scent.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  35,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Essence Mascara Lash Princess",
-        "Description":  "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  36,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Eyeshadow Palette with Mirror",
-        "Description":  "The Eyeshadow Palette with Mirror offers a versatile range of eyeshadow shades for creating stunning eye looks. With a built-in mirror, it is convenient for on-the-go makeup application.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  37,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Powder Canister",
-        "Description":  "The Powder Canister is a finely milled setting powder designed to set makeup and control shine. With a lightweight and translucent formula, it provides a smooth and matte finish.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  38,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Red Lipstick",
-        "Description":  "The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and pigmented formula, it provides a vibrant and long-lasting finish.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  39,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Red Nail Polish",
-        "Description":  "The Red Nail Polish offers a rich and glossy red hue for vibrant and polished nails. With a quick-drying formula, it provides a salon-quality finish at home.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  40,
-        "UserCode":  "00c2f66a-e396-4865-9338-d9cb8faff7d4",
-        "Name":  "Calvin Klein CK One",
-        "Description":  "CK One by Calvin Klein is a classic unisex fragrance, known for its fresh and clean scent. It is a versatile fragrance suitable for everyday wear.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  78,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Knoll Saarinen Executive Conference Chair",
-        "Description":  "The Knoll Saarinen Executive Conference Chair is a modern and ergonomic chair, perfect for your office or conference room with its timeless design.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  79,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Wooden Bathroom Sink With Mirror",
-        "Description":  "The Wooden Bathroom Sink with Mirror is a unique and stylish addition to your bathroom, featuring a wooden sink countertop and a matching mirror.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  80,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Apple",
-        "Description":  "Fresh and crisp apples, perfect for snacking or incorporating into various recipes.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  81,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Beef Steak",
-        "Description":  "High-quality beef steak, great for grilling or cooking to your preferred level of doneness.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  82,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Cat Food",
-        "Description":  "Nutritious cat food formulated to meet the dietary needs of your feline friend.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  83,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Chicken Meat",
-        "Description":  "Fresh and tender chicken meat, suitable for various culinary preparations.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  84,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Cooking Oil",
-        "Description":  "Versatile cooking oil suitable for frying, sauteing, and various culinary applications.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  85,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Cucumber",
-        "Description":  "Crisp and hydrating cucumbers, ideal for salads, snacks, or as a refreshing side.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  86,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Dog Food",
-        "Description":  "Specially formulated dog food designed to provide essential nutrients for your canine companion.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  87,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Eggs",
-        "Description":  "Fresh eggs, a versatile ingredient for baking, cooking, or breakfast.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  88,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Fish Steak",
-        "Description":  "Quality fish steak, suitable for grilling, baking, or pan-searing.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  89,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Green Bell Pepper",
-        "Description":  "Fresh and vibrant green bell pepper, perfect for adding color and flavor to your dishes.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  90,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Green Chili Pepper",
-        "Description":  "Spicy green chili pepper, ideal for adding heat to your favorite recipes.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  91,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Honey Jar",
-        "Description":  "Pure and natural honey in a convenient jar, perfect for sweetening beverages or drizzling over food.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  92,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Ice Cream",
-        "Description":  "Creamy and delicious ice cream, available in various flavors for a delightful treat.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  93,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Juice",
-        "Description":  "Refreshing fruit juice, packed with vitamins and great for staying hydrated.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    },
-    {
-        "ShoppingItemId":  94,
-        "UserCode":  "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
-        "Name":  "Kiwi",
-        "Description":  "Nutrient-rich kiwi, perfect for snacking or adding a tropical twist to your dishes.",
-        "Created":  "2025-04-30T09:41:02.053Z"
-    }
+  {
+    "ShoppingItemId": 5,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Demon Slayer: Kimetsu no Yaiba Kamado Nezuko Handmade Figure 22cm",
+    "Description": "It is made of high-quality PVC material and stands about 22cm tall. The figure features carefully handmade painting, vivid character design, and fine details of her appearance, expression and costume.This is a handmade collectible figure of Kamado Nezuko from the popular anime Demon Slayer.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 6,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "2 Pieces of High-Speed Remote Control Boat, 2.4G Wireless Remote Control",
+    "Description": "This is an electric remote-controlled speedboat toy, suitable for outdoor use in ponds, lakes, and swimming pools. It's suitable for children and model enthusiasts.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 7,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Powder Canister",
+    "Description": "The Powder Canister is a finely milled setting powder designed to set makeup and control shine. With a lightweight and translucent formula, it provides a smooth and matte finish.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 8,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Red Lipstick",
+    "Description": "The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and pigmented formula, it provides a vibrant and long-lasting finish.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 9,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Red Nail Polish",
+    "Description": "The Red Nail Polish offers a rich and glossy red hue for vibrant and polished nails. With a quick-drying formula, it provides a salon-quality finish at home.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 10,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Calvin Klein CK One",
+    "Description": "CK One by Calvin Klein is a classic unisex fragrance, known for its fresh and clean scent. It is a versatile fragrance suitable for everyday wear.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 11,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Machine Works V8 Engine Plastic Model Kit",
+    "Description": "Dad's Choice Awards 2013 - Winner. This model is a greatly simplified version of a real V8 car engine featuring realistic V8 sound and illuminating spark plugs. Contains over 250 pieces and all that you need to assemble the model. Comes with a style manual giving you step by step instruction as well as interesting information about V8 engines.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 12,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "Lenovo ThinkPad E14 Gen 7 14 Core Ultra 7 32GB 1TB Laptop",
+    "Description": "Intel Core Ultra 7 258V processor for powerful performance. 14 WUXGA (1920×1200) IPS display with crisp visuals. 32GB LPDDR5x memory for seamless multitasking. 1TB NVMe SSD for fast storage and boot times. Backlit keyboard for easier typing in low light. Integrated Intel Arc Graphics 140V for enhanced visuals. Windows 11 Pro with Copilot+ AI productivity features",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 13,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "ES Echosmart SY2 Smart WiFi Geyser timer-eWelink app - with energy metering",
+    "Description": "With a manual override switch, this smart meter allows you to monitor your geyser/pool pump/ air conditioner etc power consumption of up to 63A, helping you pinpoint the factors driving up your electricity bill. Features include live, hourly, daily, monthly, and yearly consumption tracking. You can remotely control your geyser from anywhere via the eWelink app, available for both iOS and Android.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 14,
+    "UserCode": "d3b07384-d9a0-4f1e-8c2e-1f2b3c4d5e6f",
+    "Name": "ACEBOTT DC Motor Driver Module",
+    "Description": "The ACEBOTT DC Motor Driver Module enables precise control over the rotation direction and speed of a DC motor through input signals. It features two control pins-IN+ for clockwise rotation and IN- for counterclockwise rotation-allowing directional control by applying high or low signals to each pin.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 35,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "Certified Pre-Owned Lenovo L470 - Intel Core i5 6th Gen 8GB RAM 256GB SSD",
+    "Description": "The Lenovo L470 is a business-class laptop built for reliability, security, and performance. Powered by a 6th Gen Intel Core i5 processor, 8GB RAM, and a fast 256GB SSD, it's a great solution for professionals and students seeking performance on a budget.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 36,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "HONOR X5i Smart Watch | Strava, Google Fit, Apple Health Compatible - White",
+    "Description": "Experience a smarter lifestyle with the HONOR Watch X5i. Featuring a large 1.97-inch AMOLED display, ultra-lightweight design, 21-day battery life, Bluetooth calling and comprehensive health tracking, this smartwatch combines style, performance and everyday convenience. The HONOR Watch X5i is designed for users who want a stylish smartwatch with powerful features and long-lasting performance. Its expansive AMOLED display delivers vibrant visuals with a smooth viewing experience, while the lightweight body ensures comfortable all-day wear.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 37,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "14 Inch Studio Ring Light LED Light For Video Photography Lighting NESTY",
+    "Description": "Create professional-quality photos, videos, live streams and social media content with the NESTY NRL-77 14Inch LED Studio Ring Light. Designed to provide bright, soft and even illumination, this large ring light helps reduce harsh shadows and gives your face or subject a clean, professional appearance Create professional-quality photos, videos, live streams and social media content with the NESTY NRL-77 14Inch LED Studio Ring Light. Designed to provide bright, soft and even illumination, this large ring light helps reduce harsh shadows and gives your face or subject a clean, professional appearance..",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 38,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "20mm ARGB Case Fans with 24 LED Lights PWM Control & ARGB Effect",
+    "Description": "Three-sided Infinite Mirror ARGB light effect the side infinity mirrors on the left and right sides of the fan are based on infinite geometry Multiple layers 0.5mm apart are visible in the circular infinity mirror at the center of the fan.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 39,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "Philips Evnia 23.8\" FHD IPS 144Hz Gaming Monitor.",
+    "Description": "Experience fast, fluid and detailed gameplay with the Philips Evnia 24M2N2100NF Gaming Monitor.Its 23.8-inch IPS panel delivers crisp Full HD visuals with realistic colour and wide viewing angles. A maximum refresh rate of 144Hz redraws the image more frequently than a standard display, helping fast-moving gameplay appear smoother and easier to follow.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 40,
+    "UserCode": "00c2f66a-e396-4865-9338-d9cb8faff7d4",
+    "Name": "Thin Wireless Keyboard Mouse",
+    "Description": "Enjoy a clean, comfortable, and cable-free workspace with the JEQANG JW-392 Wireless Keyboard and Mouse Combo. Featuring an ultra-thin keyboard, ergonomic mouse, and reliable 2.4GHz wireless connectivity, this practical combo is ideal for home, office, studying, and everyday computer use.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 78,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Knoll Saarinen Executive Conference Chair",
+    "Description": "The Knoll Saarinen Executive Conference Chair is a modern and ergonomic chair, perfect for your office or conference room with its timeless design.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 79,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Wooden Bathroom Sink With Mirror",
+    "Description": "The Wooden Bathroom Sink with Mirror is a unique and stylish addition to your bathroom, featuring a wooden sink countertop and a matching mirror.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 80,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Apple",
+    "Description": "Fresh and crisp apples, perfect for snacking or incorporating into various recipes.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 81,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Beef Steak",
+    "Description": "High-quality beef steak, great for grilling or cooking to your preferred level of doneness.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 82,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Cat Food",
+    "Description": "Nutritious cat food formulated to meet the dietary needs of your feline friend.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 83,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Chicken Meat",
+    "Description": "Fresh and tender chicken meat, suitable for various culinary preparations.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 84,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Cooking Oil",
+    "Description": "Versatile cooking oil suitable for frying, sauteing, and various culinary applications.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 85,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Cucumber",
+    "Description": "Crisp and hydrating cucumbers, ideal for salads, snacks, or as a refreshing side.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 86,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Dog Food",
+    "Description": "Specially formulated dog food designed to provide essential nutrients for your canine companion.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 87,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Eggs",
+    "Description": "Fresh eggs, a versatile ingredient for baking, cooking, or breakfast.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 88,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Fish Steak",
+    "Description": "Quality fish steak, suitable for grilling, baking, or pan-searing.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 89,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Green Bell Pepper",
+    "Description": "Fresh and vibrant green bell pepper, perfect for adding color and flavor to your dishes.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 90,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": " Camera with 32GB TF Card, Auto Focus with 16X Digital Zoomr",
+    "Description": "Built with an advanced CMOS sensor, this compact digital camera supports 4K UHD video recording and 64MP photography. It delivers sharp, detailed footage to record natural scenery, family gatherings and all your precious moments.Featuring a 2.8-inch IPS screen, the camera comes with a handy recording pause function and supports recording while charging. With the bundled Type-C cable, you can not only transfer files to your PC easily, but also turn the camera into a functional webcam.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 91,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Honey Jar",
+    "Description": "Pure and natural honey in a convenient jar, perfect for sweetening beverages or drizzling over food.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 92,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Ice Cream",
+    "Description": "Creamy and delicious ice cream, available in various flavors for a delightful treat.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 93,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Juice",
+    "Description": "Refreshing fruit juice, packed with vitamins and great for staying hydrated.",
+    "Created": "2025-04-30T09:41:02.053Z"
+  },
+  {
+    "ShoppingItemId": 94,
+    "UserCode": "54e66112-3ef2-4ed5-8fb7-d5ca167f07b1",
+    "Name": "Intel NUC Intel i5 10th Gen 16GB ",
+    "Description": "These refurbished devices sold here have been put through a comprehensive refurbishment process and have been rigorously tested for functionality and quality to ensure performance comparable to new products. Most of these devices, and re-installed and updated software and drivers on all of them during the refurbishment process - ensuring optimal performance. Where necessary, parts have been replaced. Refurbished devices do not come with original packaging and manuals. Refurbished Intel NUC Intel i5 10th Gen - 16GB DDR4 2666 - 1TB SSD M.2 NVMe - WiFi",
+    "Created": "2025-04-30T09:41:02.053Z"
+  }
 ]
