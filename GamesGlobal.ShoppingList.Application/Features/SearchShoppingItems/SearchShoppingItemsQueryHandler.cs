@@ -39,7 +39,7 @@ public sealed class SearchShoppingItemsQueryHandler : IApplicationRequestHandler
         using var activity = _activitySource.StartActivity($"Running {nameof(SearchShoppingItemsQueryHandler)}", ActivityKind.Server);
         _logger.LogInformation("Get Shopping Items");
 
-        IReadOnlyList<Pgvector.Vector> embeddings = await _embeddingService.GenerateAsync([request.Search], cancellationToken);
+        IReadOnlyList<Pgvector.Vector> embeddings = await _embeddingService.GenerateAsync([request.SearchText], cancellationToken);
 
         var shoppingItems = await _applicationDbContext.ShoppingItems
             .AsNoTracking()
@@ -49,7 +49,7 @@ public sealed class SearchShoppingItemsQueryHandler : IApplicationRequestHandler
                 ShoppingItem = shoppingItem,
                 IsFullTextMatch = EF.Functions
                     .ToTsVector("english", shoppingItem.Name + " " + shoppingItem.Description)
-                    .Matches(EF.Functions.WebSearchToTsQuery("english", request.Search)),
+                    .Matches(EF.Functions.WebSearchToTsQuery("english", request.SearchText)),
                 Distance = shoppingItem.Embeddings == null
                     ? 0D
                     : shoppingItem.Embeddings.L2Distance(embeddings[0]),
@@ -72,7 +72,7 @@ public sealed class SearchShoppingItemsQueryHandler : IApplicationRequestHandler
     }
 }
 
-public sealed record SearchShoppingItemsQuery(Guid UserCode, string Search)
+public sealed record SearchShoppingItemsQuery(Guid UserCode, string SearchText)
     : IQuery<IList<SearchShoppingItemsResponse>>
 {
 }

@@ -10,6 +10,6 @@ public sealed class SearchShoppingItemsQueryHandlerTests
         var result = new SearchShoppingItemsValidation().Validate(new SearchShoppingItemsQuery(Guid.NewGuid(), string.Empty));
 
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, error => error.PropertyName.Equals(nameof(SearchShoppingItemsQuery.Search), StringComparison.Ordinal));
+        Assert.Contains(result.Errors, error => error.PropertyName.Equals(nameof(SearchShoppingItemsQuery.SearchText), StringComparison.Ordinal));
     }
 }

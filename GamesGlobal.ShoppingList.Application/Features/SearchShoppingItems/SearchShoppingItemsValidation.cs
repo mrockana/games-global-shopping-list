@@ -10,8 +10,8 @@ public sealed class SearchShoppingItemsValidation : AbstractValidator<SearchShop
             .NotEmpty()
             .WithMessage($"{nameof(SearchShoppingItemsQuery.UserCode)} is required");
 
-        RuleFor(r => r.Search)
+        RuleFor(r => r.SearchText)
                         .NotEmpty()
-            .WithMessage($"{nameof(SearchShoppingItemsQuery.Search)} is required");
+            .WithMessage($"{nameof(SearchShoppingItemsQuery.SearchText)} is required");
     }
 }

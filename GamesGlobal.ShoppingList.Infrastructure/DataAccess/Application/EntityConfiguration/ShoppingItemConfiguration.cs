@@ -10,5 +10,8 @@ internal sealed class ShoppingItemConfiguration : IEntityTypeConfiguration<Shopp
     {
         builder.HasIndex(shoppingItem => shoppingItem.UserCode);
         builder.Property(shoppingItem => shoppingItem.Embeddings).HasColumnType("vector(768)");
+        builder.HasIndex(shoppingItem => new { shoppingItem.Name, shoppingItem.Description })
+            .HasMethod("GIN")
+            .IsTsVectorExpressionIndex("english");
     }
 }
