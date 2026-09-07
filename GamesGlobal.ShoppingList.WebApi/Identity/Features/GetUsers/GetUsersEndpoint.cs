@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GamesGlobal.ShoppingList.Application.Common.Pagination;
 using GamesGlobal.ShoppingList.Application.Common.RequestProcessor;
 using GamesGlobal.ShoppingList.Application.Identity.Features.GetUsers;
@@ -28,12 +27,12 @@ internal sealed class GetUsersEndpoint : IEndpoint
             var request = new GetUsersQuery(
                     Take: takeParsed ? takeNumber : 10,
                     Skip: skipParsed ? skipNumber : 0);
-            var result = await requestProcessor.Process<GetUsersQuery, PaginatedResults<IList<GetUsersQueryResponse>>>(request, context.RequestAborted);
+            var result = await requestProcessor.Process<GetUsersQuery, PaginatedResults<GetUsersQueryResponse>>(request, context.RequestAborted);
             return result;
         })
        .WithName("get-users")
        .AddEndpointFilter<ResponseHandlingFilter>()
-       .Produces<PaginatedResults<IList<GetUsersQueryResponse>>>()
+       .Produces<PaginatedResults<GetUsersQueryResponse>>()
        .RequireRateLimiting(RateLimiterConstants.PerUserLimiterPolicyName)
        .WithTags(EndpointTags.Identity);
     }

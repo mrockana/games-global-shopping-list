@@ -85,7 +85,7 @@ public sealed class GetUsersQueryHandlerTests
         // Assert
         Assert.False(result.HasError);
         Assert.NotNull(result.Value);
-        Assert.IsType<PaginatedResults<IList<GetUsersQueryResponse>>>(result.Value);
+        Assert.IsType<PaginatedResults<GetUsersQueryResponse>>(result.Value);
         Assert.Equal(2, result.Value.Data.Count);
 
         var firstUser = result.Value.Data[0];
