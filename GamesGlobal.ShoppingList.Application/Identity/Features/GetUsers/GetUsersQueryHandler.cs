@@ -14,7 +14,7 @@ using GamesGlobal.ShoppingList.BusinessDomain.Identity.Entities;
 
 namespace GamesGlobal.ShoppingList.Application.Identity.Features.GetUsers;
 
-public sealed class GetUsersQueryHandler : IApplicationRequestHandler<GetUsersQuery, PaginatedResults<IList<GetUsersQueryResponse>>>
+public sealed class GetUsersQueryHandler : IApplicationRequestHandler<GetUsersQuery, PaginatedResults<GetUsersQueryResponse>>
 {
     private readonly IIdentityRepository _repository;
     private readonly ActivitySource _activitySource;
@@ -25,7 +25,7 @@ public sealed class GetUsersQueryHandler : IApplicationRequestHandler<GetUsersQu
         _activitySource = DiagnosticConfig.ActivitySource;
     }
 
-    public async Task<Result<PaginatedResults<IList<GetUsersQueryResponse>>>> Handle(GetUsersQuery request, CancellationToken cancellationToken = default)
+    public async Task<Result<PaginatedResults<GetUsersQueryResponse>>> Handle(GetUsersQuery request, CancellationToken cancellationToken = default)
     {
         using var activity = _activitySource.StartActivity($"Running {nameof(GetUsersQueryHandler)}");
 
@@ -38,7 +38,7 @@ public sealed class GetUsersQueryHandler : IApplicationRequestHandler<GetUsersQu
         {
             var notFoundEx = new DomainNotFoundException("No users found.");
             activity?.AddException(notFoundEx, new TagList { { "Message", notFoundEx.Message } });
-            return Result.CreateErrorResult<PaginatedResults<IList<GetUsersQueryResponse>>>(notFoundEx);
+            return Result.CreateErrorResult<PaginatedResults<GetUsersQueryResponse>>(notFoundEx);
         }
 
         var paginatedSpec = findAllSpec
@@ -51,17 +51,17 @@ public sealed class GetUsersQueryHandler : IApplicationRequestHandler<GetUsersQu
             .Select(u => u.ToGetUsersQueryResponse())
             .ToList();
 
-        var response = new PaginatedResults<IList<GetUsersQueryResponse>>(
+        var response = new PaginatedResults<GetUsersQueryResponse>(
             Data: usersResponse,
             TotalRecords: totalUsers,
             PageSize: request.Take,
             TotalPages: (int)Math.Ceiling((double)totalUsers / request.Take),
             CurrentPage: (request.Skip / request.Take) + 1);
 
-        return Result.CreateResult<PaginatedResults<IList<GetUsersQueryResponse>>>(response);
+        return Result.CreateResult<PaginatedResults<GetUsersQueryResponse>>(response);
     }
 }
 
-public sealed record GetUsersQuery(int Take = 10, int Skip = 0) : PaginatedRequestBase(Take, Skip), IQuery<PaginatedResults<IList<GetUsersQueryResponse>>>
+public sealed record GetUsersQuery(int Take = 10, int Skip = 0) : PaginatedRequestBase(Take, Skip), IQuery<PaginatedResults<GetUsersQueryResponse>>
 {
 }

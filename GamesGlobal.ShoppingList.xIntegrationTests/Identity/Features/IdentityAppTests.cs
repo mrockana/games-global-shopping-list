@@ -127,7 +127,7 @@ public sealed class IdentityAppTests : IClassFixture<GamesGlobalWebApiFactory>
         var result = await _apiClient.GetAsync("/identity/users?take=10&skip=0");
         result.EnsureSuccessStatusCode();
 
-        var response = await result.Content.ReadFromJsonAsync<PaginatedResults<IList<GetUsersQueryResponse>>>();
+        var response = await result.Content.ReadFromJsonAsync<PaginatedResults<GetUsersQueryResponse>>();
 
         Assert.NotNull(response);
         Assert.True(response.TotalRecords >= 3);
