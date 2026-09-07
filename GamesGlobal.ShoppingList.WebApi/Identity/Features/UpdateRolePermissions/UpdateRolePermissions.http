@@ -7,11 +7,17 @@ Content-Type: application/json
 Accept: */*
 
 {
-  "RoleId": 4,
+  "RoleId": 3,
   "RoleName": "Agent",
   "Permissions": [
     {
-      "Value": -1
+      "Value": 1
+    },
+        {
+      "Value": 2
+    },
+        {
+      "Value": 4
     }
   ]
 }
